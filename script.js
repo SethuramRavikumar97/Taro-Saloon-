@@ -118,6 +118,7 @@ let state = {
   b2bPartyGst: '',
   isIGST: false,
   catalogSearch: '',
+  catalogHighlightIndex: 0,
   catalogFilter: 'All',
   showPreview: false,
   previewBill: null,
@@ -774,6 +775,68 @@ function isCurrentCustomerMember(){
   return !!(cust && cust.membershipId);
 }
 
+// Builds the flat, in-order list of catalog rows exactly as they're
+// rendered in Billing (services grouped by category, then products) —
+// used for keyboard Up/Down highlighting and Enter-to-add.
+function getVisibleCatalogEntries(){
+  const search = (state.catalogSearch||'').trim().toLowerCase();
+  const catFilter = state.catalogFilter || 'All';
+  function matches(item){
+    if(!search) return false; // nothing shown until a search is typed, matching current UI
+    return item.name.toLowerCase().includes(search) || (item.code||item.sku||'').toLowerCase().includes(search);
+  }
+  const entries = [];
+  if(catFilter !== 'Products'){
+    const cats = groupBy(state.services, 'category');
+    Object.entries(cats).forEach(([cat, items]) => {
+      if(catFilter !== 'All' && catFilter !== cat) return;
+      items.filter(matches).forEach(s => entries.push({ type:'service', id:s.id, disabled:false }));
+    });
+  }
+  if(catFilter === 'All' || catFilter === 'Products'){
+    state.products.filter(matches).forEach(p => entries.push({ type:'product', id:p.id, disabled: p.stock <= 0 }));
+  }
+  return entries;
+}
+
+// Click OR Enter on a catalog row both funnel through here: add the item,
+// then clear the search box and re-focus it so the next item can be typed
+// immediately — no manual clearing needed between adds.
+function quickAddCatalogItem(type, itemId){
+  const src = type === 'service' ? state.services : state.products;
+  const item = src.find(i=>i.id===itemId);
+  if(item && type==='product' && item.stock <= 0){
+    showToast(item.name + ' is out of stock');
+    return;
+  }
+  addToCart(type, itemId);
+  state.catalogSearch = '';
+  state.catalogHighlightIndex = 0;
+  render();
+}
+
+// Up/Down moves the highlighted row, Enter adds whichever row is highlighted
+// — so a whole item can be added without touching the mouse.
+function handleCatalogSearchKeydown(evt){
+  const entries = getVisibleCatalogEntries();
+  if(evt.key === 'ArrowDown'){
+    evt.preventDefault();
+    if(entries.length === 0) return;
+    state.catalogHighlightIndex = Math.min(entries.length - 1, (state.catalogHighlightIndex||0) + 1);
+    render();
+  } else if(evt.key === 'ArrowUp'){
+    evt.preventDefault();
+    if(entries.length === 0) return;
+    state.catalogHighlightIndex = Math.max(0, (state.catalogHighlightIndex||0) - 1);
+    render();
+  } else if(evt.key === 'Enter'){
+    evt.preventDefault();
+    const idx = Math.min(state.catalogHighlightIndex||0, entries.length - 1);
+    const picked = entries[idx];
+    if(picked && !picked.disabled) quickAddCatalogItem(picked.type, picked.id);
+  }
+}
+
 function addToCart(type, itemId){
   if(!isCustomerInfoEntered()){
     showToast('Please enter Customer Name or Phone Number first!');
@@ -902,10 +965,26 @@ function changeQty(lineId, delta){
 function cartSubtotal(){
   return state.cart.reduce((s,l)=>s + l.price*l.qty, 0);
 }
+// GST must be calculated on the amount AFTER discounts, not the full price.
+// E.g. Haircut ₹600 with ₹100 discount → GST is calculated on ₹500, not ₹600.
+// Each line absorbs its proportional share of the overall discount/coupon
+// (and, for services, its share of the membership discount too), then GST
+// is computed on what's left of that line.
 function cartGST(){
+  const sub = cartSubtotal();
+  const svcSub = serviceSubtotal();
+  const generalDiscTotal = discountAmount() + couponAmount();   // applies across products + services
+  const memberDiscTotal = membershipDiscountAmount();            // services only
+
   return state.cart.reduce((s,l)=> {
+    const lineValue = l.price * l.qty;
     const itemGstRate = l.gst !== undefined ? l.gst : state.settings.defaultGst;
-    return s + (l.price * l.qty * (itemGstRate / 100));
+
+    const generalShare = sub > 0 ? (lineValue / sub) * generalDiscTotal : 0;
+    const memberShare = (l.type === 'service' && svcSub > 0) ? (lineValue / svcSub) * memberDiscTotal : 0;
+
+    const netLineValue = Math.max(0, lineValue - generalShare - memberShare);
+    return s + (netLineValue * (itemGstRate / 100));
   }, 0);
 }
 
@@ -2440,7 +2519,11 @@ function renderDashboard(){
 function renderBilling(){
   const cats = groupBy(state.services, 'category');
   const sub = cartSubtotal(), gst = cartGST(), memDisc = membershipDiscountAmount(), disc = discountAmount(), coup = couponAmount(), total = grandTotal();
-  const effectiveGstRatePercent = sub > 0 ? (gst / sub) * 100 : 0;
+  // % shown on the receipt should reflect the rate applied to the DISCOUNTED
+  // (net taxable) value, not the full pre-discount subtotal — otherwise a
+  // genuine 18% item shows as some lower/odd % once a discount is applied.
+  const netTaxableValue = Math.max(0, sub - memDisc - disc - coup);
+  const effectiveGstRatePercent = netTaxableValue > 0 ? (gst / netTaxableValue) * 100 : 0;
   const gstSplitPercent = round2(effectiveGstRatePercent / 2);
   const cgst = gst / 2;
   const sgst = gst / 2;
@@ -2464,6 +2547,8 @@ function renderBilling(){
     if(!search) return true;
     return item.name.toLowerCase().includes(search) || (item.code||item.sku||'').toLowerCase().includes(search);
   }
+  const catalogEntries = getVisibleCatalogEntries();
+  const highlightIdx = Math.min(state.catalogHighlightIndex||0, Math.max(0, catalogEntries.length-1));
 
   return `
   <div class="page-head">
@@ -2502,7 +2587,9 @@ function renderBilling(){
           ${selectedCustObj ? `
             <span class="tag ${activeMemPlan ? 'tag-gold' : 'tag-sage'}" style="margin-right:auto;">
               ${activeMemPlan ? '👑 ' + activeMemPlan.name + ' Member' : '✓ Existing Customer'}
-            </span>` : ''}
+            </span>
+            ${!activeMemPlan ? `<button class="btn btn-ghost btn-sm" onclick="openModal('customer','${selectedCustObj.id}')">+ Add Membership</button>` : ''}
+          ` : ''}
           <button class="btn btn-gold btn-sm" onclick="handleCustomerSearch()">Search Customer</button>
           <button class="btn btn-ghost btn-sm" onclick="resetCustomerSearch()">Reset</button>
         </div>
@@ -2527,14 +2614,14 @@ function renderBilling(){
       <div style="opacity: ${isCustomerReady ? '1' : '0.55'}; pointer-events: ${isCustomerReady ? 'auto' : 'none'}; transition: opacity 0.2s ease;">
         <div style="display:flex; gap:6px; margin-bottom:10px;">
           <input type="text" id="catalog-search-input" placeholder="Search service or product..." value="${state.catalogSearch||''}"
-            oninput="state.catalogSearch=this.value; render();" style="flex:1;">
-          <button class="btn btn-gold" onclick="render()">Search</button>
-          <button class="btn btn-ghost" onclick="state.catalogSearch=''; render();">Reset</button>
+            oninput="state.catalogSearch=this.value; state.catalogHighlightIndex=0; render();"
+            onkeydown="handleCatalogSearchKeydown(event)" style="flex:1;">
+          <button class="btn btn-ghost" onclick="state.catalogSearch=''; state.catalogHighlightIndex=0; render();">Reset</button>
         </div>
 
         ${!search ? `
         <div class="empty-state" style="padding:16px; text-align:center; font-size:12.5px;">
-          Search a service or product name above, then tap “+” to add it to the bill.
+          Search a service or product name above, then click it (or press ↓ then Enter) to add it to the bill.
         </div>` : `
         <div class="catalog-list">
           ${(catFilter !== 'Products') ? Object.entries(cats)
@@ -2545,18 +2632,20 @@ function renderBilling(){
               return `
                 <div class="cat-group">
                   <h4>${cat}</h4>
-                  ${filtered.map(s => `
-                    <div class="cat-item">
+                  ${filtered.map(s => {
+                    const idx = catalogEntries.findIndex(e => e.type==='service' && e.id===s.id);
+                    const isHighlighted = idx === highlightIdx;
+                    return `
+                    <div class="cat-item" style="cursor:pointer; ${isHighlighted ? 'background:#fdf6e3; border-radius:6px;' : ''}" onclick="quickAddCatalogItem('service','${s.id}')">
                       <div>
                         <div class="cat-item-name">${s.name}</div>
                         <div class="cat-item-meta">${s.code} · ${s.duration} min · GST ${s.gst}%</div>
                       </div>
                       <div style="display:flex;align-items:center;">
                         <span class="cat-item-price mono">${money(s.price)}</span>
-                        <button class="add-dot" onclick="addToCart('service','${s.id}')">+</button>
                       </div>
                     </div>
-                  `).join('')}
+                  `;}).join('')}
                 </div>
               `;
             }).join('') : ''}
@@ -2564,18 +2653,20 @@ function renderBilling(){
           ${(catFilter === 'All' || catFilter === 'Products') ? `
           <div class="cat-group">
             <h4>Products</h4>
-            ${state.products.filter(matchesSearch).map(p => `
-              <div class="cat-item">
+            ${state.products.filter(matchesSearch).map(p => {
+              const idx = catalogEntries.findIndex(e => e.type==='product' && e.id===p.id);
+              const isHighlighted = idx === highlightIdx;
+              return `
+              <div class="cat-item" style="cursor:${p.stock<=0?'not-allowed':'pointer'}; opacity:${p.stock<=0?'0.5':'1'}; ${isHighlighted ? 'background:#fdf6e3; border-radius:6px;' : ''}" onclick="${p.stock<=0?'':`quickAddCatalogItem('product','${p.id}')`}">
                 <div>
                   <div class="cat-item-name">${p.name}</div>
                   <div class="cat-item-meta">${p.brand} · Stock ${p.stock}</div>
                 </div>
                 <div style="display:flex;align-items:center;">
                   <span class="cat-item-price mono">${money(p.price)}</span>
-                  <button class="add-dot" onclick="addToCart('product','${p.id}')" ${p.stock <= 0 ? 'disabled' : ''}>+</button>
                 </div>
               </div>
-            `).join('')}
+            `;}).join('')}
           </div>` : ''}
 
           ${state.services.filter(matchesSearch).length === 0 && state.products.filter(matchesSearch).length === 0 ? `<div class="empty-state" style="padding:14px; font-size:12.5px;">No service or product matches “${state.catalogSearch}”.</div>` : ''}
@@ -4437,13 +4528,15 @@ function renderPreviewModal(){
   const total = grandTotal();
   const sub = cartSubtotal();
   const gst = cartGST();
-  const effectiveGstRatePercent = sub > 0 ? (gst / sub) * 100 : 0;
+  const memDisc = membershipDiscountAmount();
+  const disc = discountAmount();
+  const coup = couponAmount();
+  const netTaxableValue = Math.max(0, sub - memDisc - disc - coup);
+  const effectiveGstRatePercent = netTaxableValue > 0 ? (gst / netTaxableValue) * 100 : 0;
   const gstSplitPercent = round2(effectiveGstRatePercent / 2);
   const cgst = gst / 2;
   const sgst = gst / 2;
-  const memberDisc = membershipDiscountAmount();
-  const disc = discountAmount();
-  const coup = couponAmount();
+  const memberDisc = memDisc;
   const tip = Number(state.tip) || 0;
   const cust = state.selectedCustomer ? state.customers.find(c=>c.id===state.selectedCustomer) : null;
   const custName = cust ? cust.name : (state.walkInDetails.name || 'Walk-in');
@@ -4516,7 +4609,8 @@ function renderBillDetailsModal(){
   const cust = state.customers.find(c=>c.id===b.customerId);
   const subtotal = Number(b.subtotal || 0);
   const totalGst = Number(b.gst || 0);
-  const effectiveGstRatePercent = subtotal > 0 ? (totalGst / subtotal) * 100 : 0;
+  const netTaxableValue = Math.max(0, subtotal - Number(b.membershipDiscount||0) - Number(b.discount||0));
+  const effectiveGstRatePercent = netTaxableValue > 0 ? (totalGst / netTaxableValue) * 100 : 0;
   const gstSplitPercent = round2(effectiveGstRatePercent / 2);
   const cgst = totalGst / 2;
   const sgst = totalGst / 2;
