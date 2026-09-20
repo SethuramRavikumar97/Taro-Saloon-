@@ -101,6 +101,8 @@ let state = {
     {id:'P5', name:'Sunscreen SPF 50', brand:'Lotus Herbals', category:'Skin Care', sku:'LT-SS-50', mrp:495, price:495, gst:18, stock:2, minStock:5},
   ],
   bills: [],
+  appointments: [],
+  appointmentsFilterDate: '',
   cart: [],
   discount: {type:'flat', value:0},
   membershipOverrideValue: null,
@@ -239,6 +241,19 @@ const dbMap = {
     balanceReturned: r.balance_returned || 0, status: r.status || 'ACTIVE',
     isB2B: !!r.is_b2b, partyGst: r.party_gst || '', isIGST: !!r.is_igst, auditedAt: r.audited_at
   }),
+  appointmentToRow: a => ({
+    id: a.id, date: a.date, time: a.time, customer_id: a.customerId || null,
+    customer_name: a.customerName || '', customer_mobile: a.customerMobile || '',
+    service_id: a.serviceId || null, service_name: a.serviceName || '',
+    stylist: a.stylist || '', status: a.status || 'Pending', notes: a.notes || ''
+  }),
+  appointmentFromRow: r => ({
+    id: r.id, date: r.date, time: r.time, customerId: r.customer_id,
+    customerName: r.customer_name || '', customerMobile: r.customer_mobile || '',
+    serviceId: r.service_id, serviceName: r.service_name || '',
+    stylist: r.stylist || '', status: r.status || 'Pending', notes: r.notes || '',
+    createdAt: r.created_at
+  }),
   couponToRow: c => ({
     id: c.id, code: c.code, name: c.name, type: c.type || 'flat', value: c.value,
     min_bill: c.minBill || 0, expiry: c.expiry || null, active: !!c.active,
@@ -376,6 +391,8 @@ async function dbLoadAll(){
       apply: (data) => { if(data && data.length) state.products = data.map(dbMap.productFromRow); } },
     { name: 'bills', run: () => sb.from('bills').select('*').order('date', { ascending: false }),
       apply: (data) => { if(data) state.bills = data.map(dbMap.billFromRow); } },
+    { name: 'appointments', run: () => sb.from('appointments').select('*').order('date', { ascending: true }).order('time', { ascending: true }),
+      apply: (data) => { if(data) state.appointments = data.map(dbMap.appointmentFromRow); } },
     { name: 'coupons', run: () => sb.from('coupons').select('*').order('created_at', { ascending: false }),
       apply: (data) => { if(data) state.coupons = data.map(dbMap.couponFromRow); } },
     { name: 'inward_entries', run: () => sb.from('inward_entries').select('*').order('date', { ascending: false }),
@@ -1559,7 +1576,9 @@ function finalizeBill(){
   if(bill.customerId){
     const cust = state.customers.find(c=>c.id===bill.customerId);
     if(cust){
-      cust.points = (cust.points||0) + Math.floor(total/100);
+      // 1 point per ₹500 actually spent — calculated on the final (post-discount)
+      // total, not the pre-discount price, so points reflect real spend.
+      cust.points = (cust.points||0) + Math.floor(total/500);
       dbWrite(sb && sb.from('customers').update({ points: cust.points }).eq('id', cust.id), 'Update customer points');
     }
   }
@@ -1624,7 +1643,7 @@ function cancelInvoice(billId) {
   }
 }
 
-function printReceipt(){ window.print(); }
+function printReceipt(){ window.print(); } // kept for compatibility; no longer wired to any button — printing is only available after Confirm & Save Invoice
 
 function sharePaymentLink() {
   const mobile = state.selectedCustomer 
@@ -1645,7 +1664,7 @@ function sharePaymentLink() {
 
 /* ============ NAVIGATION ============ */
 // 'User' (staff) role only ever sees these tabs — Admin sees everything in NAV.
-const USER_ALLOWED_TABS = ['dashboard', 'billing', 'b2b'];
+const USER_ALLOWED_TABS = ['dashboard', 'billing', 'b2b', 'appointments'];
 
 function isAdmin(){
   return state.auth.isAuthenticated && state.auth.user && state.auth.user.role === 'Admin';
@@ -1869,6 +1888,7 @@ const NAV = [
   {id:'dashboard', label:'Dashboard', icon:'◆'},
   {id:'billing', label:'New Bill', icon:'🧾'},
   {id:'b2b', label:'B2B Invoice', icon:'🏢'},
+  {id:'appointments', label:'Appointments', icon:'📅'},
   {id:'customers', label:'Customers', icon:'👤'},
   {id:'users', label:'Users / Staff', icon:'👥'},
   {id:'services', label:'Services', icon:'✂️'},
@@ -2269,6 +2289,152 @@ function resetDashboardFiltersToToday(){
   render();
 }
 
+function getDashboardHeroStats(){
+  const activeBills = state.bills.filter(b=> b.status !== 'CANCELLED');
+  const todayKeyStr = todayKey();
+  const yd = new Date(); yd.setDate(yd.getDate()-1);
+  const yesterdayKeyStr = yd.toISOString().slice(0,10);
+
+  function billsOnDate(dateKey){
+    return activeBills.filter(b => (new Date(b.date)).toISOString().slice(0,10) === dateKey);
+  }
+  const todaysBills = billsOnDate(todayKeyStr);
+  const yestBills = billsOnDate(yesterdayKeyStr);
+
+  const todaySales = todaysBills.reduce((s,b)=>s+Number(b.total||0),0);
+  const yestSales = yestBills.reduce((s,b)=>s+Number(b.total||0),0);
+
+  function productSalesOf(bills){
+    return bills.reduce((s,b)=> s + (b.items||[]).filter(i=>i.type==='product').reduce((s2,i)=>s2+Number(i.price)*Number(i.qty),0), 0);
+  }
+  const todayProductSales = productSalesOf(todaysBills);
+  const yestProductSales = productSalesOf(yestBills);
+
+  const todayAppointments = state.appointments.filter(a=>a.date===todayKeyStr && a.status!=='Cancelled').length;
+  const yestAppointments = state.appointments.filter(a=>a.date===yesterdayKeyStr && a.status!=='Cancelled').length;
+
+  // "New" customer = their first-ever active bill falls on that date.
+  function firstBillDateForCustomer(custId){
+    const dates = activeBills.filter(b=>b.customerId===custId).map(b=> new Date(b.date).toISOString().slice(0,10)).sort();
+    return dates[0];
+  }
+  const todayCustomerIds = Array.from(new Set(todaysBills.map(b=>b.customerId).filter(Boolean)));
+  const newCustomersToday = todayCustomerIds.filter(cid => firstBillDateForCustomer(cid) === todayKeyStr).length;
+  const yestCustomerIds = Array.from(new Set(yestBills.map(b=>b.customerId).filter(Boolean)));
+  const newCustomersYesterday = yestCustomerIds.filter(cid => firstBillDateForCustomer(cid) === yesterdayKeyStr).length;
+
+  function pctChange(t, y){
+    if(y === 0) return t > 0 ? 100 : 0;
+    return round2(((t - y) / y) * 100);
+  }
+
+  const last7 = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const key = d.toISOString().slice(0,10);
+    last7.push({ key, label: d.toLocaleDateString('en-IN',{day:'2-digit',month:'short'}), total: billsOnDate(key).reduce((s,b)=>s+Number(b.total||0),0) });
+  }
+
+  return {
+    todaySales, todaySalesChange: pctChange(todaySales, yestSales),
+    todayProductSales, productSalesChange: pctChange(todayProductSales, yestProductSales),
+    todayAppointments, appointmentsChange: pctChange(todayAppointments, yestAppointments),
+    newCustomersToday, newCustomersChange: pctChange(newCustomersToday, newCustomersYesterday),
+    last7
+  };
+}
+
+function renderDashboardHeroSection(){
+  const h = getDashboardHeroStats();
+  const maxBar = Math.max(1, ...h.last7.map(d=>d.total));
+  const statusColor = { Pending:'tag-alert', Confirmed:'tag-gold', Completed:'tag-sage', Cancelled:'tag-rose' };
+  const todaysAppts = getTodayAppointments();
+
+  function deltaBadge(pct){
+    const up = pct >= 0;
+    return `<span style="color:${up?'var(--sage)':'var(--alert)'}; font-weight:600;">${up?'↑':'↓'} ${Math.abs(round2(pct))}%</span> <span style="color:var(--text-dim);">vs yesterday</span>`;
+  }
+
+  return `
+  <div class="grid grid-4" style="margin-bottom:16px;">
+    <div class="card" style="display:flex; gap:14px; align-items:flex-start;">
+      <div style="width:44px; height:44px; border-radius:50%; background:var(--gold-soft); display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;">🧾</div>
+      <div>
+        <div class="stat-label">Today's Sales</div>
+        <div class="stat-value">${money(h.todaySales)}</div>
+        <div class="stat-delta">${deltaBadge(h.todaySalesChange)}</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex; gap:14px; align-items:flex-start;">
+      <div style="width:44px; height:44px; border-radius:50%; background:var(--gold-soft); display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;">📅</div>
+      <div>
+        <div class="stat-label">Total Appointments</div>
+        <div class="stat-value">${h.todayAppointments}</div>
+        <div class="stat-delta">${deltaBadge(h.appointmentsChange)}</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex; gap:14px; align-items:flex-start;">
+      <div style="width:44px; height:44px; border-radius:50%; background:var(--gold-soft); display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;">👥</div>
+      <div>
+        <div class="stat-label">New Customers</div>
+        <div class="stat-value">${h.newCustomersToday}</div>
+        <div class="stat-delta">${deltaBadge(h.newCustomersChange)}</div>
+      </div>
+    </div>
+    <div class="card" style="display:flex; gap:14px; align-items:flex-start;">
+      <div style="width:44px; height:44px; border-radius:50%; background:var(--gold-soft); display:flex; align-items:center; justify-content:center; font-size:19px; flex-shrink:0;">🧴</div>
+      <div>
+        <div class="stat-label">Product Sales</div>
+        <div class="stat-value">${money(h.todayProductSales)}</div>
+        <div class="stat-delta">${deltaBadge(h.productSalesChange)}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid grid-2" style="margin-bottom:18px; align-items:stretch;">
+    <div class="card">
+      <h3 class="card-title">Sales Overview <span style="font-weight:400; font-size:12px; color:var(--text-dim);">Last 7 Days</span></h3>
+      <div style="display:flex; align-items:flex-end; gap:10px; height:150px; padding-top:10px;">
+        ${h.last7.map(d => `
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%;">
+            <div title="${money(d.total)}" style="width:100%; max-width:34px; height:${Math.max(4, Math.round((d.total/maxBar)*120))}px; background:${d.key===todayKey() ? 'var(--ink)' : 'var(--gold-soft)'}; border-radius:5px 5px 0 0;"></div>
+            <div style="font-size:10.5px; color:var(--text-dim); margin-top:6px; white-space:nowrap;">${d.label}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h3 class="card-title" style="margin:0;">Today's Appointments</h3>
+        <button class="btn-sm btn-ghost" onclick="setTab('appointments')">View All</button>
+      </div>
+      ${todaysAppts.length === 0 ? `<div class="empty-state" style="padding:20px 10px;">No appointments today.</div>` : `
+        <div style="display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto;">
+          ${todaysAppts.slice(0,6).map(a => `
+            <div style="display:flex; align-items:center; gap:10px; font-size:12.5px; padding-bottom:8px; border-bottom:1px solid var(--line);">
+              <span class="mono" style="width:70px; flex-shrink:0; color:var(--text-dim);">${formatApptTime(a.time)}</span>
+              <span style="flex:1;">${a.serviceName || 'Appointment'} — <b>${a.customerName}</b></span>
+              <span class="tag ${statusColor[a.status]||''}">${a.status}</span>
+            </div>
+          `).join('')}
+        </div>
+      `}
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px;">
+    <h3 class="card-title">Quick Actions</h3>
+    <div class="grid grid-4">
+      <button class="btn btn-ghost" style="padding:14px;" onclick="setTab('billing')">🧾 New Bill</button>
+      <button class="btn btn-ghost" style="padding:14px;" onclick="openModal('customer')">👤 Add Customer</button>
+      <button class="btn btn-ghost" style="padding:14px;" onclick="openModal('appointment')">📅 Book Appointment</button>
+      <button class="btn btn-ghost" style="padding:14px;" onclick="openModal('product')">🧴 Add Product</button>
+    </div>
+  </div>
+  `;
+}
+
 function renderDashboard(){
   ensureDashboardDateFreshness();
   const today = new Date().toDateString();
@@ -2304,6 +2470,8 @@ function renderDashboard(){
     <div style="display:flex; align-items:center; gap:12px; margin-left:auto;">
     </div>
   </div>
+
+  ${renderDashboardHeroSection()}
 
   <div class="grid" style="grid-template-columns:minmax(0,1.7fr) 320px; align-items:start;">
     <div>
@@ -2588,6 +2756,7 @@ function renderBilling(){
             <span class="tag ${activeMemPlan ? 'tag-gold' : 'tag-sage'}" style="margin-right:auto;">
               ${activeMemPlan ? '👑 ' + activeMemPlan.name + ' Member' : '✓ Existing Customer'}
             </span>
+            <span class="tag" style="background:#eef2f7; color:#334155;" title="Loyalty points earned so far">⭐ ${selectedCustObj.points || 0} pts</span>
             ${!activeMemPlan ? `<button class="btn btn-ghost btn-sm" onclick="openModal('customer','${selectedCustObj.id}')">+ Add Membership</button>` : ''}
           ` : ''}
           <button class="btn btn-gold btn-sm" onclick="handleCustomerSearch()">Search Customer</button>
@@ -2699,16 +2868,16 @@ function renderBilling(){
               </div>
             `).join('')}
 
-            <div class="receipt-total-row"><span>Subtotal</span><span class="mono">${money(sub)}</span></div>
+            ${memDisc>0?`<div class="receipt-total-row" style="color:var(--gold);"><span>Membership Discount (${activeMemDisc.type==='flat' ? money(activeMemDisc.value) : activeMemDisc.value+'%'})</span><span class="mono">−${money(memDisc)}</span></div>`:''}
+            ${disc>0?`<div class="receipt-total-row" style="color:var(--sage);"><span>Discount</span><span class="mono">−${money(disc)}</span></div>`:''}
+            ${coup>0?`<div class="receipt-total-row" style="color:var(--sage);"><span>Coupon</span><span class="mono">−${money(coup)}</span></div>`:''}
+            <div class="receipt-total-row"><span>Subtotal</span><span class="mono">${money(netTaxableValue)}</span></div>
             ${(state.isB2BInvoice && state.isIGST) ? `
             <div class="receipt-total-row"><span>IGST (${round2(effectiveGstRatePercent)}%)</span><span class="mono">${money(gst)}</span></div>
             ` : `
             <div class="receipt-total-row"><span>CGST (${gstSplitPercent}%)</span><span class="mono">${money(cgst)}</span></div>
             <div class="receipt-total-row"><span>SGST (${gstSplitPercent}%)</span><span class="mono">${money(sgst)}</span></div>
             `}
-            ${memDisc>0?`<div class="receipt-total-row" style="color:var(--gold);"><span>Membership Discount (${activeMemDisc.type==='flat' ? money(activeMemDisc.value) : activeMemDisc.value+'%'})</span><span class="mono">−${money(memDisc)}</span></div>`:''}
-            ${disc>0?`<div class="receipt-total-row" style="color:var(--sage);"><span>Discount</span><span class="mono">−${money(disc)}</span></div>`:''}
-            ${coup>0?`<div class="receipt-total-row" style="color:var(--sage);"><span>Coupon</span><span class="mono">−${money(coup)}</span></div>`:''}
             ${Number(state.tip)>0?`<div class="receipt-total-row"><span>Tip</span><span class="mono">${money(Number(state.tip))}</span></div>`:''}
             <div class="receipt-total-row grand"><span>Total</span><span>${money(total)}</span></div>
           `}
@@ -2793,10 +2962,6 @@ function renderBilling(){
             ${state.couponMsg ? `<div style="font-size:11px; margin-top:4px; color:${state.couponMsg.ok ? 'var(--sage)' : '#c0392b'};">${state.couponMsg.ok ? '✓ ' : '✕ '}${state.couponMsg.text}</div>` : ''}
           </div>
         </div>
-        <div class="field">
-          <label>Tip</label>
-          <input type="number" min="0" value="${state.tip}" onchange="updateTipValue(this.value)">
-        </div>
 
         <label style="margin-top:10px;">Step 4 — Payment Options</label>
         <div style="font-size:11.5px; color:var(--text-dim); margin-bottom:8px;">
@@ -2838,7 +3003,6 @@ function renderBilling(){
 
         <div style="display:flex;gap:10px;margin-top:14px;">
           <button class="btn btn-gold" style="flex:1;" onclick="openPreview()">Preview Invoice</button>
-          <button class="btn btn-ghost" onclick="printReceipt()">Print</button>
         </div>
       </div>
       ` : ''}
@@ -3609,6 +3773,42 @@ function renderModal(){
       ` : ''}
       <button class="btn btn-gold" style="width:100%; margin-top:10px;" onclick="saveCustomerModal('${state.editingId||''}')">Save Customer</button>
     `;
+  } else if(state.modal === 'appointment') {
+    const appt = state.editingId ? state.appointments.find(a => a.id === state.editingId) : {
+      date: new Date().toISOString().slice(0,10), time:'', customerId:null, customerName:'', customerMobile:'',
+      serviceId:null, serviceName:'', stylist:'', status:'Pending', notes:''
+    };
+    title = state.editingId ? 'Edit Appointment' : 'Book Appointment';
+    content = `
+      <div class="field-row">
+        <div class="field"><label>Date</label><input type="date" id="ap-date" value="${appt.date||''}"></div>
+        <div class="field"><label>Time</label><input type="time" id="ap-time" value="${appt.time||''}"></div>
+      </div>
+      <div class="field"><label>Customer Name</label><input id="ap-customer-name" value="${appt.customerName||''}" placeholder="e.g. Anitha S."></div>
+      <div class="field"><label>Mobile</label><input id="ap-customer-mobile" value="${appt.customerMobile||''}" placeholder="e.g. 9876543210"></div>
+      <div class="field">
+        <label>Service</label>
+        <select id="ap-service">
+          <option value="">-- Select Service --</option>
+          ${state.services.map(s => `<option value="${s.id}" ${appt.serviceId===s.id?'selected':''}>${s.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>Stylist</label>
+        <select id="ap-stylist">
+          <option value="">-- Any Stylist --</option>
+          ${state.users.filter(u=>u.status==='Active').map(u => `<option value="${u.name}" ${appt.stylist===u.name?'selected':''}>${u.name}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field">
+        <label>Status</label>
+        <select id="ap-status">
+          ${['Pending','Confirmed','Completed','Cancelled'].map(s => `<option ${appt.status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </div>
+      <div class="field"><label>Notes (optional)</label><textarea id="ap-notes" rows="2">${appt.notes||''}</textarea></div>
+      <button class="btn btn-gold" style="width:100%; margin-top:10px;" onclick="saveAppointmentModal('${state.editingId||''}')">${state.editingId ? 'Update Appointment' : 'Book Appointment'}</button>
+    `;
   } else if(state.modal === 'user') {
     const usr = state.editingId ? state.users.find(u => u.id === state.editingId) : {name:'', role:'Stylist', mobile:'', status:'Active', dob:'', doj:''};
     title = state.editingId ? 'Edit User / Staff' : 'Add New User / Staff';
@@ -3750,6 +3950,140 @@ function saveCustomerModal(id) {
   state.newCustomerPrefill = null;
   state.tempMembershipSelection = null;
   closeModal();
+}
+
+/* ============ APPOINTMENTS ============ */
+function saveAppointmentModal(id){
+  const date = document.getElementById('ap-date').value;
+  const time = document.getElementById('ap-time').value;
+  const customerName = document.getElementById('ap-customer-name').value.trim();
+  const customerMobile = document.getElementById('ap-customer-mobile').value.trim();
+  const serviceId = document.getElementById('ap-service').value || null;
+  const service = serviceId ? state.services.find(s=>s.id===serviceId) : null;
+  const stylist = document.getElementById('ap-stylist').value || '';
+  const status = document.getElementById('ap-status').value || 'Pending';
+  const notes = document.getElementById('ap-notes').value.trim();
+
+  if(!date || !time){ showToast('Please pick a date and time'); return; }
+  if(!customerName){ showToast('Please enter the customer name'); return; }
+
+  // If the name matches an existing customer, link the appointment to them.
+  const matchedCustomer = state.customers.find(c => c.name.toLowerCase() === customerName.toLowerCase() || (customerMobile && c.mobile === customerMobile));
+
+  if(id){
+    const appt = state.appointments.find(a => a.id === id);
+    if(appt){
+      Object.assign(appt, {
+        date, time, customerName, customerMobile,
+        customerId: matchedCustomer ? matchedCustomer.id : null,
+        serviceId, serviceName: service ? service.name : '',
+        stylist, status, notes
+      });
+      dbWrite(sb && sb.from('appointments').update(dbMap.appointmentToRow(appt)).eq('id', appt.id), 'Update appointment');
+      logActivity('Updated Appointment', appt.customerName + ' — ' + appt.date + ' ' + appt.time);
+    }
+    showToast('Appointment updated');
+  } else {
+    const newAppt = {
+      id: uid('AP'), date, time, customerName, customerMobile,
+      customerId: matchedCustomer ? matchedCustomer.id : null,
+      serviceId, serviceName: service ? service.name : '',
+      stylist, status, notes
+    };
+    state.appointments.push(newAppt);
+    dbWrite(sb && sb.from('appointments').insert(dbMap.appointmentToRow(newAppt)), 'Book appointment');
+    logActivity('Booked Appointment', newAppt.customerName + ' — ' + newAppt.date + ' ' + newAppt.time);
+    showToast('Appointment booked');
+  }
+  closeModal();
+}
+
+function updateAppointmentStatus(id, newStatus){
+  const appt = state.appointments.find(a => a.id === id);
+  if(!appt) return;
+  appt.status = newStatus;
+  dbWrite(sb && sb.from('appointments').update({ status: newStatus }).eq('id', id), 'Update appointment status');
+  showToast('Marked as ' + newStatus);
+  render();
+}
+
+function deleteAppointment(id){
+  if(!confirm('Delete this appointment?')) return;
+  state.appointments = state.appointments.filter(a => a.id !== id);
+  dbWrite(sb && sb.from('appointments').delete().eq('id', id), 'Delete appointment');
+  showToast('Appointment deleted');
+  render();
+}
+
+function getTodayAppointments(){
+  const today = new Date().toISOString().slice(0,10);
+  return state.appointments
+    .filter(a => a.date === today && a.status !== 'Cancelled')
+    .sort((a,b) => (a.time||'').localeCompare(b.time||''));
+}
+
+function formatApptTime(t){
+  if(!t) return '';
+  const [h,m] = t.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 === 0 ? 12 : h % 12;
+  return `${h12}:${String(m).padStart(2,'0')} ${period}`;
+}
+
+function renderAppointments(){
+  const filterDate = state.appointmentsFilterDate || new Date().toISOString().slice(0,10);
+  const list = state.appointments
+    .filter(a => a.date === filterDate)
+    .sort((a,b) => (a.time||'').localeCompare(b.time||''));
+
+  const statusColor = { Pending:'tag-alert', Confirmed:'tag-gold', Completed:'tag-sage', Cancelled:'tag-rose' };
+
+  return `
+  <div class="page-head">
+    <div>
+      <span class="page-eyebrow">Bookings</span>
+      <h1 class="page-title">Appointments</h1>
+      <p class="page-sub">Book, track and manage customer appointments by time slot.</p>
+    </div>
+    <button class="btn btn-gold" onclick="openModal('appointment')">+ Book Appointment</button>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+      <label style="margin:0;">Date</label>
+      <input type="date" style="width:170px;" value="${filterDate}" onchange="state.appointmentsFilterDate=this.value; render();">
+      <button class="btn-sm btn-ghost" onclick="state.appointmentsFilterDate=new Date().toISOString().slice(0,10); render();">Today</button>
+      <span style="margin-left:auto; font-size:12.5px; color:var(--text-dim);">${list.length} appointment(s) on this date</span>
+    </div>
+  </div>
+
+  <div class="card">
+    ${list.length === 0 ? `<div class="empty-state">No appointments booked for this date yet.</div>` : `
+    <table>
+      <thead><tr><th>Time</th><th>Customer</th><th>Service</th><th>Stylist</th><th>Status</th><th>Action</th></tr></thead>
+      <tbody>
+        ${list.map(a => `
+          <tr>
+            <td class="mono">${formatApptTime(a.time)}</td>
+            <td><b>${a.customerName}</b>${a.customerMobile ? `<br><span style="font-size:11px; color:var(--text-dim);">${a.customerMobile}</span>` : ''}</td>
+            <td>${a.serviceName || '—'}</td>
+            <td>${a.stylist || 'Any'}</td>
+            <td>
+              <select style="width:auto; padding:4px 8px; font-size:11.5px;" onchange="updateAppointmentStatus('${a.id}', this.value)">
+                ${['Pending','Confirmed','Completed','Cancelled'].map(s => `<option ${a.status===s?'selected':''}>${s}</option>`).join('')}
+              </select>
+            </td>
+            <td>
+              <button class="btn-sm btn-ghost" onclick="openModal('appointment','${a.id}')">Edit</button>
+              <button class="btn-sm btn-danger" onclick="deleteAppointment('${a.id}')">Delete</button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    `}
+  </div>
+  `;
 }
 
 function saveUserModal(id) {
@@ -4579,16 +4913,16 @@ function renderPreviewModal(){
         `;}).join('')}
 
         <div style="border-top:1px dashed #ccc; margin-top:8px; padding-top:8px;">
-          <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>Subtotal</span><span class="mono">${money(sub)}</span></div>
+          ${memberDisc > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--gold);"><span>Membership Discount</span><span class="mono">−${money(memberDisc)}</span></div>` : ''}
+          ${disc > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--sage);"><span>Discount</span><span class="mono">−${money(disc)}</span></div>` : ''}
+          ${coup > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--sage);"><span>Coupon</span><span class="mono">−${money(coup)}</span></div>` : ''}
+          <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>Subtotal</span><span class="mono">${money(netTaxableValue)}</span></div>
           ${(state.isB2BInvoice && state.isIGST) ? `
           <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>IGST (${round2(effectiveGstRatePercent)}%)</span><span class="mono">${money(gst)}</span></div>
           ` : `
           <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>CGST (${gstSplitPercent}%)</span><span class="mono">${money(cgst)}</span></div>
           <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>SGST (${gstSplitPercent}%)</span><span class="mono">${money(sgst)}</span></div>
           `}
-          ${memberDisc > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--gold);"><span>Membership Discount</span><span class="mono">−${money(memberDisc)}</span></div>` : ''}
-          ${disc > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--sage);"><span>Discount</span><span class="mono">−${money(disc)}</span></div>` : ''}
-          ${coup > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--sage);"><span>Coupon</span><span class="mono">−${money(coup)}</span></div>` : ''}
           ${tip > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>Tip</span><span class="mono">${money(tip)}</span></div>` : ''}
           <div class="receipt-total-row grand" style="display:flex; justify-content:space-between; font-weight:bold; font-size:15px; margin-top:6px;"><span>Total</span><span>${money(total)}</span></div>
         </div>
@@ -4596,7 +4930,6 @@ function renderPreviewModal(){
 
       <div class="no-print" style="display:flex;gap:10px; margin-top:15px;">
         <button class="btn btn-ghost" style="flex:1;" onclick="closePreview()">Back to Edit</button>
-        <button class="btn btn-ghost" style="flex:1;" onclick="window.print()">Print</button>
       </div>
       <button class="btn btn-gold no-print" style="width:100%; margin-top:8px;" onclick="finalizeBill()">Confirm & Save Invoice</button>
     </div>
@@ -4652,15 +4985,15 @@ function renderBillDetailsModal(){
           </div>`;}).join('')}
 
         <div style="border-top:1px dashed #ccc; margin-top:8px; padding-top:8px;">
-          <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>Subtotal</span><span class="mono">${money(b.subtotal)}</span></div>
+          ${b.membershipDiscount > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--gold);"><span>Membership Discount</span><span class="mono">−${money(b.membershipDiscount)}</span></div>` : ''}
+          ${b.discount > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--sage);"><span>Discount</span><span class="mono">−${money(b.discount)}</span></div>` : ''}
+          <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>Subtotal</span><span class="mono">${money(netTaxableValue)}</span></div>
           ${b.isIGST ? `
           <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>IGST (${round2(effectiveGstRatePercent)}%)</span><span class="mono">${money(totalGst)}</span></div>
           ` : `
           <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>CGST (${gstSplitPercent}%)</span><span class="mono">${money(cgst)}</span></div>
           <div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>SGST (${gstSplitPercent}%)</span><span class="mono">${money(sgst)}</span></div>
           `}
-          ${b.membershipDiscount > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--gold);"><span>Membership Discount</span><span class="mono">−${money(b.membershipDiscount)}</span></div>` : ''}
-          ${b.discount > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between; color:var(--sage);"><span>Discount</span><span class="mono">−${money(b.discount)}</span></div>` : ''}
           ${b.tip > 0 ? `<div class="receipt-total-row" style="display:flex; justify-content:space-between;"><span>Tip</span><span class="mono">${money(b.tip)}</span></div>` : ''}
           <div class="receipt-total-row grand" style="display:flex; justify-content:space-between; font-weight:bold; font-size:15px; margin-top:6px;"><span>Total</span><span>${money(b.total)}</span></div>
         </div>
@@ -4713,6 +5046,7 @@ function render(){
   let mainContent = '';
   if(state.tab==='dashboard') mainContent = renderDashboard();
   else if(state.tab==='billing' || state.tab==='b2b') mainContent = renderBilling();
+  else if(state.tab==='appointments') mainContent = renderAppointments();
   else if(state.tab==='customers') mainContent = renderCustomers();
   else if(state.tab==='users') mainContent = renderUsers();
   else if(state.tab==='services') mainContent = renderServices();
