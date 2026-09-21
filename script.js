@@ -103,6 +103,9 @@ let state = {
   bills: [],
   appointments: [],
   appointmentsFilterDate: '',
+  pendingAppointmentsCollapsed: false,
+  apDraft: null,
+  apCustomerSuggestions: [],
   cart: [],
   discount: {type:'flat', value:0},
   membershipOverrideValue: null,
@@ -2349,6 +2352,7 @@ function renderDashboardHeroSection(){
   const maxBar = Math.max(1, ...h.last7.map(d=>d.total));
   const statusColor = { Pending:'tag-alert', Confirmed:'tag-gold', Completed:'tag-sage', Cancelled:'tag-rose' };
   const todaysAppts = getTodayAppointments();
+  const allPendingAppts = getAllPendingAppointments();
 
   function deltaBadge(pct){
     const up = pct >= 0;
@@ -2421,6 +2425,25 @@ function renderDashboardHeroSection(){
         </div>
       `}
     </div>
+  </div>
+
+  <div class="card" style="margin-bottom:18px; border:2px dashed var(--alert); background:#fff8f7;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:${allPendingAppts.length?'10px':'0'};">
+      <h3 class="card-title" style="margin:0; color:var(--alert);">⏳ Pending Appointments <span style="font-weight:400; font-size:12px; color:var(--text-dim);">(all dates)</span></h3>
+      <button class="btn-sm btn-ghost" onclick="setTab('appointments')">View All</button>
+    </div>
+    ${allPendingAppts.length === 0 ? `<div style="font-size:12.5px; color:var(--text-dim);">No pending appointments right now.</div>` : `
+      <div style="display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto;">
+        ${allPendingAppts.slice(0,6).map(a => `
+          <div style="display:flex; align-items:center; gap:10px; font-size:12.5px; padding-bottom:8px; border-bottom:1px solid var(--line);">
+            <span class="mono" style="width:95px; flex-shrink:0; color:var(--text-dim);">${new Date(a.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short'})} ${formatApptTime(a.time)}</span>
+            <span style="flex:1;">${a.serviceName || 'Appointment'} — <b>${a.customerName}</b></span>
+            <button class="btn-sm btn-gold" onclick="updateAppointmentStatus('${a.id}','Confirmed')">Confirm</button>
+          </div>
+        `).join('')}
+      </div>
+      ${allPendingAppts.length > 6 ? `<div style="font-size:11px; color:var(--text-dim); margin-top:6px;">+${allPendingAppts.length - 6} more — <a href="javascript:void(0)" onclick="setTab('appointments')" style="color:var(--gold);">view all</a></div>` : ''}
+    `}
   </div>
 
   <div class="card" style="margin-bottom:18px;">
@@ -3703,6 +3726,19 @@ function openModal(type, id){
       state.newCustomerPrefill = null;
     }
   }
+  if(type === 'appointment'){
+    const existing = id ? state.appointments.find(a => a.id === id) : null;
+    state.apDraft = existing ? { ...existing } : {
+      // Default to a real time (10:00 AM) — not blank — so a fresh booking
+      // still has a valid time even if the person never touches the AM/PM
+      // dropdowns (they were previously left blank until touched, which
+      // silently blocked saving with a "pick a date and time" error).
+      date: new Date().toISOString().slice(0,10), time:'10:00', customerId:null, customerName:'', customerMobile:'',
+      newCustomerDob:'', newCustomerGst:'',
+      serviceId:null, serviceName:'', stylist:'', status:'Pending', notes:''
+    };
+    state.apCustomerSuggestions = [];
+  }
   render(); 
 }
 function closeModal(){ 
@@ -3711,6 +3747,8 @@ function closeModal(){
   state.newCustomerPrefill = null;
   state.tempMembershipSelection = null;
   state.pendingStaffLineId = null;
+  state.apDraft = null;
+  state.apCustomerSuggestions = [];
   render(); 
 }
 
@@ -3774,39 +3812,69 @@ function renderModal(){
       <button class="btn btn-gold" style="width:100%; margin-top:10px;" onclick="saveCustomerModal('${state.editingId||''}')">Save Customer</button>
     `;
   } else if(state.modal === 'appointment') {
-    const appt = state.editingId ? state.appointments.find(a => a.id === state.editingId) : {
-      date: new Date().toISOString().slice(0,10), time:'', customerId:null, customerName:'', customerMobile:'',
-      serviceId:null, serviceName:'', stylist:'', status:'Pending', notes:''
-    };
+    const appt = state.apDraft || { date: new Date().toISOString().slice(0,10), time:'', customerId:null, customerName:'', customerMobile:'', serviceId:null, serviceName:'', stylist:'', status:'Pending', notes:'' };
+    const timeParts = time24ToParts(appt.time);
     title = state.editingId ? 'Edit Appointment' : 'Book Appointment';
     content = `
       <div class="field-row">
-        <div class="field"><label>Date</label><input type="date" id="ap-date" value="${appt.date||''}"></div>
-        <div class="field"><label>Time</label><input type="time" id="ap-time" value="${appt.time||''}"></div>
+        <div class="field"><label>Date</label><input type="date" id="ap-date" value="${appt.date||''}" onchange="state.apDraft.date=this.value;"></div>
+        <div class="field">
+          <label>Time</label>
+          <div style="display:flex; gap:6px;">
+            <select id="ap-time-hour" style="flex:1;" onchange="updateApTimePart('hour12', this.value)">
+              ${Array.from({length:12},(_,i)=>i+1).map(h => `<option value="${h}" ${timeParts.hour12===h?'selected':''}>${h}</option>`).join('')}
+            </select>
+            <select id="ap-time-minute" style="flex:1;" onchange="updateApTimePart('minute', this.value)">
+              ${[0,5,10,15,20,25,30,35,40,45,50,55].map(m => `<option value="${m}" ${timeParts.minute===m?'selected':''}>${String(m).padStart(2,'0')}</option>`).join('')}
+            </select>
+            <select id="ap-time-ampm" style="flex:1;" onchange="updateApTimePart('ampm', this.value)">
+              <option ${timeParts.ampm==='AM'?'selected':''}>AM</option>
+              <option ${timeParts.ampm==='PM'?'selected':''}>PM</option>
+            </select>
+          </div>
+        </div>
       </div>
-      <div class="field"><label>Customer Name</label><input id="ap-customer-name" value="${appt.customerName||''}" placeholder="e.g. Anitha S."></div>
-      <div class="field"><label>Mobile</label><input id="ap-customer-mobile" value="${appt.customerMobile||''}" placeholder="e.g. 9876543210"></div>
+      <div class="field" style="position:relative;">
+        <label>Customer Name</label>
+        <input id="ap-customer-name" value="${appt.customerName||''}" placeholder="e.g. Anitha S." oninput="handleApCustomerSearchInput('customerName', this.value)" autocomplete="off">
+        ${appt.customerId ? (() => {
+          const linkedCust = state.customers.find(c => c.id === appt.customerId);
+          return `<div style="font-size:11px; color:var(--sage); margin-top:3px;">✓ Existing customer — details auto-filled ${linkedCust ? `· ⭐ ${linkedCust.points||0} pts` : ''}</div>`;
+        })() : ''}
+        ${renderApCustomerSuggestions()}
+      </div>
+      <div class="field" style="position:relative;">
+        <label>Mobile</label>
+        <input id="ap-customer-mobile" value="${appt.customerMobile||''}" placeholder="e.g. 9876543210" oninput="handleApCustomerSearchInput('customerMobile', this.value)" autocomplete="off">
+      </div>
+      ${!appt.customerId ? `
+      <div style="font-size:11px; color:var(--text-dim); margin:-6px 0 10px;">New customer — same details as Add Customer (optional, can fill in later from Customers tab):</div>
+      <div class="field-row">
+        <div class="field"><label>Date of Birth</label><input type="date" id="ap-customer-dob" value="${appt.newCustomerDob||''}" onchange="state.apDraft.newCustomerDob=this.value;"></div>
+        <div class="field"><label>Party GST Number</label><input id="ap-customer-gst" value="${appt.newCustomerGst||''}" placeholder="optional, for B2B" onchange="state.apDraft.newCustomerGst=this.value;"></div>
+      </div>
+      ` : ''}
       <div class="field">
         <label>Service</label>
-        <select id="ap-service">
+        <select id="ap-service" onchange="state.apDraft.serviceId=this.value; const s=state.services.find(x=>x.id===this.value); state.apDraft.serviceName = s?s.name:'';">
           <option value="">-- Select Service --</option>
           ${state.services.map(s => `<option value="${s.id}" ${appt.serviceId===s.id?'selected':''}>${s.name}</option>`).join('')}
         </select>
       </div>
       <div class="field">
         <label>Stylist</label>
-        <select id="ap-stylist">
+        <select id="ap-stylist" onchange="state.apDraft.stylist=this.value;">
           <option value="">-- Any Stylist --</option>
           ${state.users.filter(u=>u.status==='Active').map(u => `<option value="${u.name}" ${appt.stylist===u.name?'selected':''}>${u.name}</option>`).join('')}
         </select>
       </div>
       <div class="field">
         <label>Status</label>
-        <select id="ap-status">
+        <select id="ap-status" onchange="state.apDraft.status=this.value;">
           ${['Pending','Confirmed','Completed','Cancelled'].map(s => `<option ${appt.status===s?'selected':''}>${s}</option>`).join('')}
         </select>
       </div>
-      <div class="field"><label>Notes (optional)</label><textarea id="ap-notes" rows="2">${appt.notes||''}</textarea></div>
+      <div class="field"><label>Notes (optional)</label><textarea id="ap-notes" rows="2" onchange="state.apDraft.notes=this.value;">${appt.notes||''}</textarea></div>
       <button class="btn btn-gold" style="width:100%; margin-top:10px;" onclick="saveAppointmentModal('${state.editingId||''}')">${state.editingId ? 'Update Appointment' : 'Book Appointment'}</button>
     `;
   } else if(state.modal === 'user') {
@@ -3953,29 +4021,111 @@ function saveCustomerModal(id) {
 }
 
 /* ============ APPOINTMENTS ============ */
+// Live "type name or mobile → see matching existing customers" search for
+// the Book Appointment form. Picking a suggestion auto-fills their details;
+// typing a name/mobile with no match just keeps it as a new walk-in booking.
+function handleApCustomerSearchInput(field, value){
+  if(!state.apDraft) return;
+  state.apDraft[field] = value;
+  // If they keep typing after picking someone, treat it as a fresh (possibly new) customer.
+  state.apDraft.customerId = null;
+  const q = value.trim().toLowerCase();
+  if(q.length < 2){
+    state.apCustomerSuggestions = [];
+  } else {
+    state.apCustomerSuggestions = state.customers
+      .filter(c => c.name.toLowerCase().includes(q) || (c.mobile||'').includes(q))
+      .slice(0, 6);
+  }
+  render();
+}
+
+function pickApCustomerSuggestion(custId){
+  const cust = state.customers.find(c => c.id === custId);
+  if(!cust || !state.apDraft) return;
+  state.apDraft.customerId = cust.id;
+  state.apDraft.customerName = cust.name;
+  state.apDraft.customerMobile = cust.mobile || '';
+  state.apCustomerSuggestions = [];
+  render();
+}
+
+// 24-hour "HH:MM" (used for storage/sorting) <-> 12-hour hour/minute/AM-PM
+// (used in the Book Appointment form, per request for an explicit AM/PM picker).
+function time24ToParts(t){
+  if(!t) return { hour12: 10, minute: 0, ampm: 'AM' };
+  const [h, m] = t.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const hour12 = h % 12 === 0 ? 12 : h % 12;
+  return { hour12, minute: m, ampm };
+}
+function timePartsTo24(hour12, minute, ampm){
+  let h = Number(hour12) % 12;
+  if(ampm === 'PM') h += 12;
+  return String(h).padStart(2,'0') + ':' + String(Number(minute)).padStart(2,'0');
+}
+function updateApTimePart(part, value){
+  if(!state.apDraft) return;
+  const cur = time24ToParts(state.apDraft.time);
+  const next = { ...cur, [part]: value };
+  state.apDraft.time = timePartsTo24(next.hour12, next.minute, next.ampm);
+  render();
+}
+
+function renderApCustomerSuggestions(){
+  if(!state.apCustomerSuggestions || state.apCustomerSuggestions.length === 0) return '';
+  return `
+    <div style="position:absolute; z-index:20; left:0; right:0; top:100%; background:var(--paper); border:1px solid var(--line); border-radius:8px; box-shadow:0 8px 20px rgba(0,0,0,0.1); max-height:180px; overflow-y:auto; margin-top:3px;">
+      ${state.apCustomerSuggestions.map(c => `
+        <div style="padding:8px 12px; cursor:pointer; font-size:12.5px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;" onclick="pickApCustomerSuggestion('${c.id}')">
+          <span><b>${c.name}</b> <span style="color:var(--text-dim);">— ${c.mobile}</span></span>
+          <span class="tag" style="background:#eef2f7; color:#334155;">⭐ ${c.points||0} pts</span>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
 function saveAppointmentModal(id){
-  const date = document.getElementById('ap-date').value;
-  const time = document.getElementById('ap-time').value;
-  const customerName = document.getElementById('ap-customer-name').value.trim();
-  const customerMobile = document.getElementById('ap-customer-mobile').value.trim();
-  const serviceId = document.getElementById('ap-service').value || null;
+  const draft = state.apDraft || {};
+  const date = draft.date;
+  const time = draft.time;
+  const customerName = (draft.customerName||'').trim();
+  const customerMobile = (draft.customerMobile||'').trim();
+  const serviceId = draft.serviceId || null;
   const service = serviceId ? state.services.find(s=>s.id===serviceId) : null;
-  const stylist = document.getElementById('ap-stylist').value || '';
-  const status = document.getElementById('ap-status').value || 'Pending';
-  const notes = document.getElementById('ap-notes').value.trim();
+  const stylist = draft.stylist || '';
+  const status = draft.status || 'Pending';
+  const notes = (draft.notes||'').trim();
 
   if(!date || !time){ showToast('Please pick a date and time'); return; }
   if(!customerName){ showToast('Please enter the customer name'); return; }
 
-  // If the name matches an existing customer, link the appointment to them.
-  const matchedCustomer = state.customers.find(c => c.name.toLowerCase() === customerName.toLowerCase() || (customerMobile && c.mobile === customerMobile));
+  // Prefer the customer explicitly picked from the suggestions list; fall
+  // back to matching by exact name/mobile in case they typed it out fully.
+  let matchedCustomer = draft.customerId
+    ? state.customers.find(c => c.id === draft.customerId)
+    : state.customers.find(c => c.name.toLowerCase() === customerName.toLowerCase() || (customerMobile && c.mobile === customerMobile));
+
+  // No existing match — create a real customer record for them (so they
+  // show up in Customers, earn points, etc.), not just a name on a booking.
+  if(!matchedCustomer){
+    matchedCustomer = {
+      id: uid('C'), name: customerName, mobile: customerMobile,
+      dob: draft.newCustomerDob || '', gstNumber: draft.newCustomerGst || '',
+      membershipId:null, membershipAmountPaid:null, points:0, preferredStylist:''
+    };
+    state.customers.push(matchedCustomer);
+    dbWrite(sb && sb.from('customers').insert(dbMap.customerToRow(matchedCustomer)), 'Create customer from appointment');
+    logActivity('Added Customer', matchedCustomer.name + ' (via appointment booking)');
+  }
 
   if(id){
     const appt = state.appointments.find(a => a.id === id);
     if(appt){
       Object.assign(appt, {
         date, time, customerName, customerMobile,
-        customerId: matchedCustomer ? matchedCustomer.id : null,
+        customerId: matchedCustomer.id,
         serviceId, serviceName: service ? service.name : '',
         stylist, status, notes
       });
@@ -3986,7 +4136,7 @@ function saveAppointmentModal(id){
   } else {
     const newAppt = {
       id: uid('AP'), date, time, customerName, customerMobile,
-      customerId: matchedCustomer ? matchedCustomer.id : null,
+      customerId: matchedCustomer.id,
       serviceId, serviceName: service ? service.name : '',
       stylist, status, notes
     };
@@ -3995,6 +4145,12 @@ function saveAppointmentModal(id){
     logActivity('Booked Appointment', newAppt.customerName + ' — ' + newAppt.date + ' ' + newAppt.time);
     showToast('Appointment booked');
   }
+  // Jump the Appointments list to whatever date was just booked/edited —
+  // otherwise a booking for a different day looks "missing" because the
+  // list quietly stays on today's date.
+  state.appointmentsFilterDate = date;
+  state.apDraft = null;
+  state.apCustomerSuggestions = [];
   closeModal();
 }
 
@@ -4022,6 +4178,14 @@ function getTodayAppointments(){
     .sort((a,b) => (a.time||'').localeCompare(b.time||''));
 }
 
+// All Pending appointments, across every date — not just today — sorted
+// with the soonest (or most overdue) first.
+function getAllPendingAppointments(){
+  return state.appointments
+    .filter(a => a.status === 'Pending')
+    .sort((a,b) => (a.date+a.time).localeCompare(b.date+b.time));
+}
+
 function formatApptTime(t){
   if(!t) return '';
   const [h,m] = t.split(':').map(Number);
@@ -4035,6 +4199,7 @@ function renderAppointments(){
   const list = state.appointments
     .filter(a => a.date === filterDate)
     .sort((a,b) => (a.time||'').localeCompare(b.time||''));
+  const allPending = getAllPendingAppointments();
 
   const statusColor = { Pending:'tag-alert', Confirmed:'tag-gold', Completed:'tag-sage', Cancelled:'tag-rose' };
 
@@ -4046,6 +4211,33 @@ function renderAppointments(){
       <p class="page-sub">Book, track and manage customer appointments by time slot.</p>
     </div>
     <button class="btn btn-gold" onclick="openModal('appointment')">+ Book Appointment</button>
+  </div>
+
+  <div class="card" style="margin-bottom:16px; border:2px dashed var(--alert); background:#fff8f7;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:${allPending.length?'10px':'0'};">
+      <h3 class="card-title" style="margin:0; color:var(--alert);">⏳ Pending Appointments <span style="font-weight:400; font-size:12px; color:var(--text-dim);">(all dates, not just today)</span></h3>
+      <button class="btn-sm btn-ghost" onclick="state.pendingAppointmentsCollapsed=!state.pendingAppointmentsCollapsed; render();">${state.pendingAppointmentsCollapsed?'➕ Expand':'➖ Minimize'}</button>
+    </div>
+    ${state.pendingAppointmentsCollapsed ? '' : (allPending.length === 0 ? `<div style="font-size:12.5px; color:var(--text-dim);">No pending appointments right now.</div>` : `
+    <table>
+      <thead><tr><th>Date</th><th>Time</th><th>Customer</th><th>Service</th><th>Stylist</th><th>Action</th></tr></thead>
+      <tbody>
+        ${allPending.map(a => `
+          <tr>
+            <td class="mono">${new Date(a.date).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</td>
+            <td class="mono">${formatApptTime(a.time)}</td>
+            <td><b>${a.customerName}</b></td>
+            <td>${a.serviceName || '—'}</td>
+            <td>${a.stylist || 'Any'}</td>
+            <td>
+              <button class="btn-sm btn-gold" onclick="updateAppointmentStatus('${a.id}','Confirmed')">Confirm</button>
+              <button class="btn-sm btn-ghost" onclick="state.appointmentsFilterDate='${a.date}'; render();">View</button>
+            </td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+    `)}
   </div>
 
   <div class="card" style="margin-bottom:16px;">
@@ -4060,12 +4252,15 @@ function renderAppointments(){
   <div class="card">
     ${list.length === 0 ? `<div class="empty-state">No appointments booked for this date yet.</div>` : `
     <table>
-      <thead><tr><th>Time</th><th>Customer</th><th>Service</th><th>Stylist</th><th>Status</th><th>Action</th></tr></thead>
+      <thead><tr><th>Time</th><th>Customer</th><th>Points</th><th>Service</th><th>Stylist</th><th>Status</th><th>Action</th></tr></thead>
       <tbody>
-        ${list.map(a => `
+        ${list.map(a => {
+          const linkedCust = a.customerId ? state.customers.find(c => c.id === a.customerId) : null;
+          return `
           <tr>
             <td class="mono">${formatApptTime(a.time)}</td>
             <td><b>${a.customerName}</b>${a.customerMobile ? `<br><span style="font-size:11px; color:var(--text-dim);">${a.customerMobile}</span>` : ''}</td>
+            <td>${linkedCust ? `<span class="tag" style="background:#eef2f7; color:#334155;">⭐ ${linkedCust.points||0}</span>` : '—'}</td>
             <td>${a.serviceName || '—'}</td>
             <td>${a.stylist || 'Any'}</td>
             <td>
@@ -4078,7 +4273,7 @@ function renderAppointments(){
               <button class="btn-sm btn-danger" onclick="deleteAppointment('${a.id}')">Delete</button>
             </td>
           </tr>
-        `).join('')}
+        `;}).join('')}
       </tbody>
     </table>
     `}
