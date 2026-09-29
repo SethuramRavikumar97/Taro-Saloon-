@@ -342,6 +342,21 @@ function addDbSyncWarning(label, message){
   state.dbSyncWarnings = state.dbSyncWarnings || [];
   state.dbSyncWarnings.unshift({ label, message, time: new Date() });
   state.dbSyncWarnings = state.dbSyncWarnings.slice(0, 10);
+
+  // Record the failure itself in the Activity Log — kept locally only (no
+  // dbWrite here), since the database connection is exactly what's failing;
+  // trying to sync this entry too would just repeat the same error.
+  state.activityLogs = state.activityLogs || [];
+  state.activityLogs.unshift({
+    id: uid('LOG'),
+    createdAt: new Date().toISOString(),
+    userName: (state.auth.user && state.auth.user.name) || 'System',
+    userRole: (state.auth.user && state.auth.user.role) || '',
+    action: 'Database Sync Failed',
+    details: `${label} — ${message}`
+  });
+  state.activityLogs = state.activityLogs.slice(0, 500);
+
   render();
 }
 
@@ -4159,14 +4174,17 @@ function updateAppointmentStatus(id, newStatus){
   if(!appt) return;
   appt.status = newStatus;
   dbWrite(sb && sb.from('appointments').update({ status: newStatus }).eq('id', id), 'Update appointment status');
+  logActivity('Appointment Status → ' + newStatus, appt.customerName + ' — ' + appt.date + ' ' + appt.time);
   showToast('Marked as ' + newStatus);
   render();
 }
 
 function deleteAppointment(id){
   if(!confirm('Delete this appointment?')) return;
+  const appt = state.appointments.find(a => a.id === id);
   state.appointments = state.appointments.filter(a => a.id !== id);
   dbWrite(sb && sb.from('appointments').delete().eq('id', id), 'Delete appointment');
+  logActivity('Deleted Appointment', appt ? `${appt.customerName} — ${appt.date} ${appt.time}` : id);
   showToast('Appointment deleted');
   render();
 }
