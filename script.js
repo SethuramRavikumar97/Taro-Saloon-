@@ -314,12 +314,12 @@ const dbMap = {
   }),
   logToRow: l => ({
     id: l.id, created_at: l.createdAt, user_name: l.userName || null,
-    user_role: l.userRole || null, action: l.action, details: l.details || null,
-    // Supabase's Table Editor shows timestamptz in UTC by default, which
-    // looks "wrong" next to an Indian wall clock (5:30 hrs behind). This
-    // extra plain-text column stores the same moment already formatted in
-    // IST, so the raw Supabase table is readable at a glance too.
-    created_at_ist: new Date(l.createdAt).toLocaleString('en-IN', { dateStyle:'medium', timeStyle:'medium' })
+    user_role: l.userRole || null, action: l.action, details: l.details || null
+    // Note: an earlier version also sent created_at_ist (a readable IST
+    // timestamp for the Supabase dashboard). Reverted — Supabase's schema
+    // cache kept failing to recognize that column reliably, which broke
+    // real activity-log syncing. The app itself already displays correct
+    // IST time; only the raw Supabase Table Editor view shows UTC.
   }),
   logFromRow: r => ({
     id: r.id, createdAt: r.created_at, userName: r.user_name || 'Unknown',
