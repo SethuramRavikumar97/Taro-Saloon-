@@ -1,17 +1,160 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TARO Signature Salon — Billing</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-</head>
-<body>
-<div id="app"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
-</body>
-</html>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TARO Signature Salon — Book Your Glow</title>
+<meta name="description" content="TARO Signature Salon: hair, skin, makeup, bridal and spa. Book your appointment online.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#120a14;--ink:#FAF5EF;--dim:#b9a9b4;--gold:#D9B26D;--gold2:#F4E2B8;--rose:#E8A5B5;--line:rgba(255,255,255,.12);--glass:rgba(255,255,255,.06)}
+*{box-sizing:border-box;margin:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.6 Inter,sans-serif;overflow-x:hidden}
+h1,h2,h3{font-family:Fraunces,serif;font-weight:400;line-height:1.05}
+em{font-style:italic;background:linear-gradient(90deg,var(--gold),var(--rose));-webkit-background-clip:text;background-clip:text;color:transparent}
+a{color:inherit;text-decoration:none}
+.aur{position:fixed;inset:0;z-index:-1;overflow:hidden}
+.aur i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:dr 18s ease-in-out infinite alternate}
+.aur i:nth-child(1){width:50vw;height:50vw;background:#6b2c5e;top:-15vw;left:-10vw}
+.aur i:nth-child(2){width:40vw;height:40vw;background:#b0803a;right:-10vw;top:30vh;animation-delay:-6s;opacity:.35}
+.aur i:nth-child(3){width:35vw;height:35vw;background:#8c4b5b;bottom:-10vw;left:25vw;animation-delay:-11s}
+@keyframes dr{to{transform:translate(6vw,5vh) scale(1.15)}}
+nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:14px 5vw;backdrop-filter:blur(14px);background:rgba(18,10,20,.55);border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:10px;font:600 20px Fraunces,serif;letter-spacing:.14em}
+.seal{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#1a0f1c;font:700 16px Fraunces,serif;background:radial-gradient(circle at 30% 30%,var(--gold2),var(--gold) 70%)}
+nav .l{display:flex;gap:30px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+nav .l a:hover{color:var(--gold2)}
+.btn{display:inline-block;padding:14px 30px;border:0;border-radius:99px;cursor:pointer;font:600 12px Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#1a0f1c;background:linear-gradient(120deg,var(--gold2),var(--gold));box-shadow:0 10px 40px -10px var(--gold);transition:.3s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 18px 50px -10px var(--gold)}
+.nb{display:flex;gap:10px;align-items:center}
+.btn.gh{background:none;color:var(--gold2);border:1px solid var(--gold);box-shadow:none}
+.btn.gh:hover{background:rgba(217,178,109,.15);box-shadow:none}
+@media(max-width:860px){.nb .btn{padding:11px 16px;font-size:11px}}
+section{padding:110px 6vw;position:relative}
+.eb{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:block}
+h2{font-size:clamp(34px,5vw,64px);margin-bottom:22px}
+.hero{min-height:100vh;display:grid;grid-template-columns:1.1fr .9fr;align-items:center;gap:40px;padding-top:130px}
+h1{font-size:clamp(46px,7.4vw,108px);letter-spacing:-.02em}
+.hero p{max-width:460px;color:var(--dim);margin:26px 0 38px;font-size:18px}
+.orb{position:relative;aspect-ratio:1;max-width:520px;margin:auto;width:100%}
+.blob{position:absolute;inset:8%;background:conic-gradient(from 200deg,#6b2c5e,#E8A5B5,#D9B26D,#8c4b5b,#6b2c5e);animation:mo 12s ease-in-out infinite;display:grid;place-items:center;box-shadow:0 0 120px -20px #b0803a}
+@keyframes mo{0%,100%{border-radius:58% 42% 55% 45%/50% 58% 42% 50%;transform:rotate(0)}50%{border-radius:42% 58% 45% 55%/58% 42% 58% 42%;transform:rotate(8deg)}}
+.blob b{font:italic 600 clamp(90px,16vw,200px) Fraunces,serif;color:rgba(18,10,20,.82)}
+.ring{position:absolute;inset:0;border:1px dashed rgba(217,178,109,.5);border-radius:50%;animation:sp 40s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.sp{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--gold2);box-shadow:0 0 14px 3px var(--gold);animation:tw 3s ease-in-out infinite}
+@keyframes tw{50%{opacity:.15;transform:scale(.4)}}
+.mq{border-block:1px solid var(--line);overflow:hidden;padding:20px 0;white-space:nowrap}
+.mq div{display:inline-block;animation:mq 34s linear infinite;font:italic 28px Fraunces,serif;color:var(--dim)}
+.mq span{margin:0 28px;color:var(--gold)}
+@keyframes mq{to{transform:translateX(-50%)}}
+.tabs{display:flex;flex-wrap:wrap;gap:10px;margin:30px 0}
+.tabs button{padding:10px 20px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--dim);cursor:pointer;font:500 13px Inter,sans-serif;transition:.3s}
+.tabs button.on,.tabs button:hover{background:var(--gold);color:#1a0f1c;border-color:var(--gold)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.card{padding:28px;border-radius:22px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);transition:.4s;cursor:pointer}
+.card:hover{transform:translateY(-6px);border-color:var(--gold);background:rgba(217,178,109,.08)}
+.card h3{font-size:24px;margin-top:8px}.card small{color:var(--gold);letter-spacing:.2em;text-transform:uppercase;font-size:10px}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.split p{color:var(--dim);margin:0 0 30px;font-size:18px}
+.big{border-radius:30px;min-height:420px;background:radial-gradient(circle at 70% 20%,rgba(244,226,184,.5),transparent 40%),linear-gradient(160deg,#8c4b5b,#3a1a3a 70%);border:1px solid var(--line);display:grid;place-items:center;font:italic 90px Fraunces,serif;color:rgba(255,255,255,.85)}
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
+.gal div{aspect-ratio:4/5;border-radius:20px;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:18px;font:italic 24px Fraunces,serif;border:1px solid var(--line);transition:.4s}
+.gal div:hover{transform:scale(1.03)}
+form{max-width:720px;margin:40px auto 0;padding:40px;border-radius:28px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(16px);display:grid;gap:16px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
+input,select,textarea{width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.35);color:var(--ink);font:400 15px Inter,sans-serif}
+input:focus,select:focus,textarea:focus{outline:0;border-color:var(--gold)}
+option{background:#1a0f1c}
+.sl{display:flex;flex-wrap:wrap;gap:8px}
+.sl button{padding:9px 14px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--ink);cursor:pointer;font:500 12px Inter,sans-serif}
+.sl button.on{background:var(--gold);color:#1a0f1c;border-color:var(--gold)}
+#msg{text-align:center;min-height:22px;font-size:15px}
+.hp{position:absolute;left:-9999px}
+footer{padding:60px 6vw;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;color:var(--dim)}
+footer b{color:var(--gold2);display:block;margin-bottom:8px;font:600 18px Fraunces,serif}
+.rv{opacity:0;transform:translateY(40px);transition:1s cubic-bezier(.2,.7,.2,1)}.rv.in{opacity:1;transform:none}
+@media(max-width:860px){nav .l{display:none}.hero,.split{grid-template-columns:1fr}.orb{max-width:340px}.gal{grid-template-columns:1fr 1fr}.r2{grid-template-columns:1fr}form{padding:24px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+.mo{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(10,5,12,.78);backdrop-filter:blur(8px)}.mo.on{display:grid}
+.mc{width:min(92vw,400px);max-width:none;margin:0;padding:36px;border-radius:26px;background:#1a0f1c;border:1px solid var(--gold);position:relative}
+.mc h3{font-size:32px}.x{position:absolute;top:12px;right:18px;background:none;border:0;color:var(--dim);font-size:26px;cursor:pointer}
+</style></head><body>
+<div class="aur"><i></i><i></i><i></i></div>
+<div class="mo" id="mo"><form class="mc" id="lf" novalidate><button type="button" class="x" id="lx" aria-label="Close">×</button><h3>Staff <em>login</em></h3><div><label>Email</label><input name="e" type="email" required autocomplete="username"></div><div><label>Password</label><input name="p" type="password" required autocomplete="current-password"></div><button class="btn" id="lb" type="submit">Sign in</button><div id="lm" style="font-size:14px;min-height:20px"></div></form></div>
+<nav><a class="logo" href="#top"><span class="seal">T</span>TARO</a><div class="l"><a href="#services">Services</a><a href="#bridal">Bridal</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div><div class="nb"><button class="btn gh" id="lg" type="button">Login</button><a class="btn" href="#book">Book Now</a></div></nav>
+<section class="hero" id="top"><div><span class="eb">Taro · Signature Salon</span><h1>Glow in your <em>signature</em> way.</h1><p>Hair, skin, makeup and bridal artistry, crafted slowly and finished beautifully. Reserve your chair in under a minute.</p><a class="btn" href="#book">Book Appointment</a></div>
+<div class="orb"><div class="ring"></div><div class="blob"><b>T</b></div><i class="sp" style="top:10%;left:20%"></i><i class="sp" style="top:30%;right:4%;animation-delay:-1s"></i><i class="sp" style="bottom:12%;left:8%;animation-delay:-2s"></i><i class="sp" style="bottom:22%;right:16%;animation-delay:-.5s"></i></div></section>
+<div class="mq"><div id="mq"></div></div>
+<section id="services"><span class="eb rv">What we do</span><h2 class="rv">Services made to <em>make you shine</em></h2><div class="tabs rv" id="tabs"></div><div class="grid" id="sv"></div></section>
+<section id="bridal"><div class="split"><div class="big rv">Bridal</div><div class="rv"><span class="eb">Bridal &amp; Party</span><h2>Your day, <em>flawlessly</em> yours.</h2><p>From the first trial to the final touch, we build a look that photographs beautifully and lasts through every ritual and every dance.</p><a class="btn" href="#book">Reserve Your Date</a></div></div></section>
+<section id="gallery"><span class="eb rv">Gallery</span><h2 class="rv">Looks we <em>love</em></h2><div class="gal rv" id="gal"></div></section>
+<section id="book"><div style="text-align:center" class="rv"><span class="eb">Reservations</span><h2>Book your <em>appointment</em></h2></div>
+<form id="f" class="rv" novalidate>
+<div class="r2"><div><label>Your name</label><input name="n" required maxlength="80" autocomplete="name"></div><div><label>Mobile number</label><input name="m" type="tel" required inputmode="numeric" maxlength="10" placeholder="10 digits" autocomplete="tel"></div></div>
+<div class="r2"><div><label>Service</label><select name="s" id="ss" required></select></div><div><label>Preferred date</label><input name="d" type="date" required></div></div>
+<div><label>Preferred time</label><div class="sl" id="sl"></div></div>
+<div><label>Notes (optional)</label><textarea name="t" rows="2" maxlength="250"></textarea></div>
+<input class="hp" name="website" tabindex="-1" autocomplete="off">
+<button class="btn" id="go" type="submit">Request Appointment</button><div id="msg"></div></form></section>
+<footer id="contact"><div><b>TARO Signature Salon</b><span id="ad"></span></div><div><b>Hours</b><span id="hr"></span></div><div><b>Talk to us</b><a id="ph"></a><br><a id="wa" target="_blank" rel="noopener">WhatsApp us</a></div><div><b>Team</b><a href="app.html" id="lg2">Staff Login</a></div></footer>
+<script>
+// EDIT THESE: your salon details
+const C={url:'https://eidfoikmhgkgnrnooaiz.supabase.co',key:'sb_publishable_gRZ9NbNCCOgqZTgyeZe98Q_4dNbKLoN',phone:'9876543210',wa:'919876543210',addr:'123, Main Road, City Center',hours:'Mon – Sun · 10:00 AM – 8:00 PM',gallery:[]};
+let S=[['Hair','Haircut & Style'],['Hair','Hair Spa'],['Hair','Keratin Treatment'],['Hair Colour','Global Hair Colour'],['Skin','Classic Facial'],['Skin','Hydra Facial'],['Skin','De-tan'],['Makeup','Party Makeup'],['Makeup','Bridal Makeup'],['Nails','Manicure'],['Nails','Pedicure'],['Waxing','Full Arms & Legs Waxing'],['Threading','Eyebrow Threading'],['Spa','Relaxing Massage']];
+const $=i=>document.getElementById(i),H={apikey:C.key,Authorization:'Bearer '+C.key};
+$('ad').textContent=C.addr;$('hr').textContent=C.hours;$('ph').textContent=C.phone;$('ph').href='tel:'+C.phone;$('wa').href='https://wa.me/'+C.wa;
+let cat='All',slot='';
+function draw(){const cs=['All',...new Set(S.map(x=>x[0]))];
+$('tabs').innerHTML=cs.map(c=>`<button class="${c==cat?'on':''}" data-c="${c}">${c}</button>`).join('');
+$('sv').innerHTML=S.filter(x=>cat=='All'||x[0]==cat).map(x=>`<div class="card rv in" data-s="${x[1]}"><small>${x[0]}</small><h3>${x[1]}</h3></div>`).join('');
+$('mq').innerHTML=[...S,...S].map(x=>x[1]+'<span>✦</span>').join('');
+$('ss').innerHTML='<option value="">Choose a service</option>'+S.map(x=>`<option>${x[1]}</option>`).join('')}
+draw();
+$('tabs').onclick=e=>{if(e.target.dataset.c){cat=e.target.dataset.c;draw()}};
+$('sv').onclick=e=>{const c=e.target.closest('.card');if(c){$('ss').value=c.dataset.s;location.hash='book'}};
+fetch(C.url+'/rest/v1/services?select=name,category&order=category',{headers:H}).then(r=>r.ok?r.json():[]).then(d=>{if(d.length){S=d.map(x=>[x.category||'General',x.name]);draw()}}).catch(()=>{});
+const T=[];for(let m=600;m<=1170;m+=30){const h=Math.floor(m/60),n=m%60;T.push([String(h).padStart(2,'0')+':'+String(n).padStart(2,'0'),(h>12?h-12:h)+':'+String(n).padStart(2,'0')+(h>=12?' PM':' AM')])}
+$('sl').innerHTML=T.map(t=>`<button type="button" data-t="${t[0]}">${t[1]}</button>`).join('');
+$('sl').onclick=e=>{if(e.target.dataset.t){slot=e.target.dataset.t;[...$('sl').children].forEach(b=>b.classList.toggle('on',b==e.target))}};
+const f=$('f');f.d.min=new Date().toISOString().slice(0,10);
+const G=[['Bridal','#8c4b5b,#3a1a3a'],['Hair','#6b2c5e,#241820'],['Skin','#b0803a,#3a1a3a'],['Makeup','#E8A5B5,#6b2c5e'],['Nails','#8c4b5b,#b0803a'],['Spa','#3a1a3a,#6b2c5e']];
+$('gal').innerHTML=G.map((g,i)=>`<div style="background-image:${C.gallery[i]?`url(${C.gallery[i]})`:`linear-gradient(150deg,${g[1]})`}">${g[0]}</div>`).join('');
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.rv').forEach(x=>io.observe(x));
+function say(t,ok){$('msg').style.color=ok?'#9fd6b0':'#f0a0a0';$('msg').innerHTML=t}
+f.onsubmit=async e=>{e.preventDefault();if(f.website.value)return;
+const n=f.n.value.trim(),m=f.m.value.trim(),s=f.s.value,d=f.d.value;
+if(n.length<2)return say('Please enter your name.');
+if(!/^\d{10}$/.test(m))return say('Please enter a valid 10-digit mobile number.');
+if(!s||!d||!slot)return say('Please choose a service, date and time.');
+let last=0;try{last=+localStorage.getItem('tb')||0}catch(_){}
+if(Date.now()-last<30000)return say('Please wait a few seconds before booking again.');
+$('go').disabled=true;say('Sending your request…',1);
+const row={id:'AP'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),date:d,time:slot,customer_name:n,customer_mobile:m,service_name:s,stylist:'',status:'Pending',notes:('Booked via website. '+f.t.value.trim()).slice(0,290)};
+try{const r=await fetch(C.url+'/rest/v1/appointments',{method:'POST',headers:{...H,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(row)});
+if(!r.ok)throw 0;try{localStorage.setItem('tb',Date.now())}catch(_){}
+f.reset();slot='';[...$('sl').children].forEach(b=>b.classList.remove('on'));say('✦ Thank you, '+n.split(' ')[0]+'! Your request is in. We will confirm shortly.',1)}
+catch(_){say('Sorry, we could not send that. Please call <a href="tel:'+C.phone+'" style="color:var(--gold)">'+C.phone+'</a>.')}
+$('go').disabled=false};
+// Staff login right on this page: signs in with the same Supabase project as the software,
+// the session is shared on this site, so app.html opens already logged in.
+const mo=$('mo'),lf=$('lf');
+const openL=e=>{e&&e.preventDefault();mo.classList.add('on');lf.e.focus()};
+$('lg').onclick=openL;$('lg2').onclick=openL;$('lx').onclick=()=>mo.classList.remove('on');
+mo.onclick=e=>{if(e.target==mo)mo.classList.remove('on')};
+lf.onsubmit=async e=>{e.preventDefault();const m=$('lm'),b=$('lb');
+const say=(t,ok)=>{m.style.color=ok?'#9fd6b0':'#f0a0a0';m.textContent=t};
+b.disabled=true;say('Signing in…',1);
+const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),15000);
+try{
+const r=await fetch(C.url+'/auth/v1/token?grant_type=password',{method:'POST',signal:ac.signal,headers:{apikey:C.key,'Content-Type':'application/json'},body:JSON.stringify({email:lf.e.value.trim(),password:lf.p.value})});
+const x=await r.json().catch(()=>({}));
+if(!r.ok||!x.access_token){say(r.status==400||r.status==401?'Wrong email or password.':(x.msg||x.error_description||'Login failed ('+r.status+').'));b.disabled=false;return}
+if(!x.expires_at)x.expires_at=Math.floor(Date.now()/1000)+(x.expires_in||3600);
+localStorage.setItem('sb-'+new URL(C.url).hostname.split('.')[0]+'-auth-token',JSON.stringify(x));
+try{sessionStorage.setItem('taro_web_login','1')}catch(_){}
+location.href='app.html';
+}catch(err){say(err.name=='AbortError'?'Server is not responding. Check your internet, or the Supabase project may be paused.':'Could not reach the server. Check your internet connection.');b.disabled=false}
+finally{clearTimeout(tm)}};
+// The Back button restores this page exactly as it was left ("Signing in…" frozen),
+// so reset the login popup every time the page is shown again.
+addEventListener('pageshow',e=>{if(e.persisted){mo.classList.remove('on');lf.reset();$('lb').disabled=false;$('lm').textContent=''}});
+</script></body></html>
