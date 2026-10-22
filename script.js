@@ -4106,6 +4106,29 @@ function renderApCustomerSuggestions(){
   `;
 }
 
+// The customer must exist in the database BEFORE the appointment that points to them
+// (foreign key), so these run one after the other instead of in parallel. If the customer
+// can't be saved, the appointment is still saved (unlinked) so a booking is never lost.
+async function syncAppointmentToDb(mode, appt, newCustomer){
+  if(!sb) return;
+  const label = mode === 'insert' ? 'Book appointment' : 'Update appointment';
+  try{
+    let customerOk = true;
+    if(newCustomer){
+      const rc = await sb.from('customers').insert(dbMap.customerToRow(newCustomer));
+      if(rc.error){ customerOk = false; addDbSyncWarning('Create customer from appointment', rc.error.message); }
+    }
+    const row = dbMap.appointmentToRow(appt);
+    if(!customerOk) row.customer_id = null;
+    const ra = mode === 'insert'
+      ? await sb.from('appointments').insert(row)
+      : await sb.from('appointments').update(row).eq('id', appt.id);
+    if(ra.error) addDbSyncWarning(label, ra.error.message);
+  }catch(err){
+    addDbSyncWarning(label, String((err && err.message) || err));
+  }
+}
+
 function saveAppointmentModal(id){
   const draft = state.apDraft || {};
   const date = draft.date;
@@ -4123,6 +4146,7 @@ function saveAppointmentModal(id){
 
   // Prefer the customer explicitly picked from the suggestions list; fall
   // back to matching by exact name/mobile in case they typed it out fully.
+  let createdCustomer = null;
   let matchedCustomer = draft.customerId
     ? state.customers.find(c => c.id === draft.customerId)
     : state.customers.find(c => c.name.toLowerCase() === customerName.toLowerCase() || (customerMobile && c.mobile === customerMobile));
@@ -4136,7 +4160,7 @@ function saveAppointmentModal(id){
       membershipId:null, membershipAmountPaid:null, points:0, preferredStylist:''
     };
     state.customers.push(matchedCustomer);
-    dbWrite(sb && sb.from('customers').insert(dbMap.customerToRow(matchedCustomer)), 'Create customer from appointment');
+    createdCustomer = matchedCustomer; // saved to the database together with the appointment, in order
     logActivity('Added Customer', matchedCustomer.name + ' (via appointment booking)');
   }
 
@@ -4149,7 +4173,7 @@ function saveAppointmentModal(id){
         serviceId, serviceName: service ? service.name : '',
         stylist, status, notes
       });
-      dbWrite(sb && sb.from('appointments').update(dbMap.appointmentToRow(appt)).eq('id', appt.id), 'Update appointment');
+      syncAppointmentToDb('update', appt, createdCustomer);
       logActivity('Updated Appointment', appt.customerName + ' — ' + appt.date + ' ' + appt.time);
     }
     showToast('Appointment updated');
@@ -4161,7 +4185,7 @@ function saveAppointmentModal(id){
       stylist, status, notes
     };
     state.appointments.push(newAppt);
-    dbWrite(sb && sb.from('appointments').insert(dbMap.appointmentToRow(newAppt)), 'Book appointment');
+    syncAppointmentToDb('insert', newAppt, createdCustomer);
     logActivity('Booked Appointment', newAppt.customerName + ' — ' + newAppt.date + ' ' + newAppt.time);
     showToast('Appointment booked');
   }
@@ -5279,7 +5303,7 @@ function render(){
   document.getElementById('app').innerHTML = `
     ${(state.dbSyncWarnings && state.dbSyncWarnings.length > 0) ? `
     <div style="position:fixed; top:0; left:0; right:0; z-index:200; background:#B5473F; color:#fff; padding:10px 16px; font-size:12.5px; display:flex; align-items:center; gap:12px; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
-      <span>⚠️ Database sync failed for: <b>${state.dbSyncWarnings.map(w=>w.label).join(', ')}</b> — data is only saved on this device until this is fixed. Check Supabase table permissions (RLS).</span>
+      <span>⚠️ Database sync failed for: <b>${state.dbSyncWarnings.map(w=>w.label).join(', ')}</b> — data is only saved on this device until this is fixed. Check Supabase table permissions (RLS).${state.dbSyncWarnings[0] ? `<br><small>Reason: ${state.dbSyncWarnings[0].message}</small>` : ''}</span>
       <button onclick="dismissDbSyncWarnings()" style="margin-left:auto; background:rgba(255,255,255,0.2); border:none; color:#fff; padding:4px 10px; border-radius:6px; cursor:pointer; flex-shrink:0;">Dismiss</button>
     </div>
     ` : ''}
@@ -5311,6 +5335,13 @@ async function bootstrapApp(){
   }
   if(state.auth.isAuthenticated){
     checkDailyStockReport();
+    // Logged in from the public website's Login popup? Record it like a normal login.
+    try{
+      if(sessionStorage.getItem('taro_web_login')){
+        sessionStorage.removeItem('taro_web_login');
+        logActivity('Login', `${state.auth.user.role} logged in (via website)`);
+      }
+    }catch(e){}
   }
   render();
 }
