@@ -533,3 +533,13 @@ main{padding-top:68px}
 /* ---------- Brand logo ---------- */
 .brand-logo{width:64px;height:64px;object-fit:contain;display:block;margin-bottom:8px}
 .seal-img{width:70px;height:70px;object-fit:contain;display:block;margin:0 auto 6px}
+
+
+/* ---------- Printing: only the invoice prints (no menu, sidebar, bottom bar, banners) ---------- */
+@media print{
+  .app,.sidebar,.mobile-bottom-nav,.menu-btn,.nav-backdrop,.toast,.no-print,.modal-head,#app > div[style*="position:fixed"]{display:none !important}
+  html,body{background:#fff !important;height:auto !important}
+  .modal-backdrop{position:static !important;display:block !important;background:none !important;padding:0 !important;overflow:visible !important}
+  .modal{max-width:none !important;width:100% !important;box-shadow:none !important;border-radius:0 !important;padding:0 !important;background:none !important}
+  .modal .receipt{margin:0 !important;border:none !important;box-shadow:none !important}
+}
