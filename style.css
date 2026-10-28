@@ -509,3 +509,27 @@ label {
   .toast { left: 12px; right: 12px; bottom: 90px; }
   input, select, textarea { font-size: 16px; }
 }
+
+
+/* ---------- Slide-out menu (hamburger) ---------- */
+.sidebar{transition:margin-left .35s cubic-bezier(.2,.7,.2,1),transform .35s cubic-bezier(.2,.7,.2,1)}
+.app.nav-closed .sidebar{margin-left:-220px}
+.menu-btn{position:fixed;top:14px;left:232px;z-index:90;width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--paper);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;box-shadow:0 4px 14px rgba(36,24,32,.1);transition:left .35s cubic-bezier(.2,.7,.2,1)}
+.menu-btn i{display:block;width:18px;height:2px;border-radius:2px;background:var(--ink)}
+.app.nav-closed .menu-btn{left:14px}
+.nav-backdrop{display:none}
+main{padding-top:68px}
+@media (max-width:768px){
+  .menu-btn,.app.nav-closed .menu-btn{left:12px;top:12px}
+  .sidebar{display:flex !important;position:fixed;left:0;top:0;bottom:0;z-index:100;margin-left:0 !important;width:260px;box-shadow:0 0 40px rgba(0,0,0,.4)}
+  .app.nav-closed .sidebar{transform:translateX(-105%)}
+  .app:not(.nav-closed) .nav-backdrop{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:95}
+  .app:not(.nav-closed) .menu-btn{left:272px}
+  main{padding-top:64px !important}
+}
+@media print{.menu-btn,.nav-backdrop{display:none !important}}
+
+
+/* ---------- Brand logo ---------- */
+.brand-logo{width:64px;height:64px;object-fit:contain;display:block;margin-bottom:8px}
+.seal-img{width:70px;height:70px;object-fit:contain;display:block;margin:0 auto 6px}
