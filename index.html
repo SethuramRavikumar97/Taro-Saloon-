@@ -1,5 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>TARO Signature Salon — Book Your Glow</title>
+<link rel="icon" href="logo-192.png"><link rel="apple-touch-icon" href="logo-192.png">
 <meta name="description" content="TARO Signature Salon: hair, skin, makeup, bridal and spa. Book your appointment online.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -27,7 +28,7 @@ nav .l a:hover{color:var(--gold2)}
 .btn.gh:hover{background:rgba(217,178,109,.15);box-shadow:none}
 html{overflow-x:hidden}
 @media(max-width:860px){.nb .btn{padding:11px 16px;font-size:11px}}
-@media(max-width:420px){nav{padding:12px 4vw}.logo{font-size:17px;letter-spacing:.1em;gap:8px}.seal{width:30px;height:30px;font-size:14px}.nb{gap:6px}.nb .btn{padding:9px 12px;font-size:10px;letter-spacing:.1em}section{padding:80px 5vw}h2{font-size:32px}form{padding:20px}.mc{padding:26px}}
+@media(max-width:420px){nav{padding:12px 4vw}.logo{font-size:17px;letter-spacing:.1em;gap:8px}.lg{width:30px;height:30px}.nb{gap:6px}.nb .btn{padding:9px 12px;font-size:10px;letter-spacing:.1em}section{padding:80px 5vw}h2{font-size:32px}form{padding:20px}.mc{padding:26px}}
 section{padding:110px 6vw;position:relative}
 .eb{font-size:11px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:block}
 h2{font-size:clamp(34px,5vw,64px);margin-bottom:22px}
@@ -78,12 +79,27 @@ footer b{color:var(--gold2);display:block;margin-bottom:8px;font:600 18px Fraunc
 .mo{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(10,5,12,.78);backdrop-filter:blur(8px)}.mo.on{display:grid}
 .mc{width:min(92vw,400px);max-width:none;margin:0;padding:36px;border-radius:26px;background:#1a0f1c;border:1px solid var(--gold);position:relative}
 .mc h3{font-size:32px}.x{position:absolute;top:12px;right:18px;background:none;border:0;color:var(--dim);font-size:26px;cursor:pointer}
+.lg{width:40px;height:40px;object-fit:contain}
+.hlw{width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#1d1020,#0e060f);display:grid;place-items:center;box-shadow:inset 0 0 50px rgba(0,0,0,.7),0 0 40px rgba(0,0,0,.4)}
+.hlw img{width:80%;filter:drop-shadow(0 0 18px rgba(217,178,109,.35))}
+.hb{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--glass);display:grid;place-content:center;gap:5px;cursor:pointer}
+.hb i{display:block;width:20px;height:2px;background:var(--ink);border-radius:2px;transition:.35s}
+.hb.on i:nth-child(1){transform:translateY(7px) rotate(45deg)}.hb.on i:nth-child(2){opacity:0}.hb.on i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+nav{z-index:50}nav .l{display:none}section{scroll-margin-top:72px}
+.dr{position:fixed;top:0;right:0;bottom:0;width:min(86vw,380px);z-index:40;padding:100px 36px 36px;background:rgba(26,15,28,.97);backdrop-filter:blur(20px);border-left:1px solid var(--gold);transform:translateX(105%);transition:transform .5s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;gap:4px}
+.dr.on{transform:none}
+.dr a{font:400 34px Fraunces,serif;padding:8px 0;opacity:.85;transition:.3s}
+.dr a:hover{color:var(--gold2);padding-left:10px;opacity:1}
+.dr small{margin-top:auto;color:var(--dim);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.dv{position:fixed;inset:0;z-index:30;background:rgba(10,5,12,.6);opacity:0;pointer-events:none;transition:.4s}.dv.on{opacity:1;pointer-events:auto}
+.gal div{position:relative;overflow:hidden}.gal svg{position:absolute;left:14%;top:12%;width:72%;height:auto;opacity:.92;transition:.5s}.gal div:hover svg{transform:scale(1.08) rotate(-3deg)}.gal span{position:relative}
+@media(max-width:520px){#lg{display:none}}
 </style></head><body>
 <div class="aur"><i></i><i></i><i></i></div>
 <div class="mo" id="mo"><form class="mc" id="lf" novalidate><button type="button" class="x" id="lx" aria-label="Close">×</button><h3>Staff <em>login</em></h3><div><label>Email</label><input name="e" type="email" required autocomplete="username"></div><div><label>Password</label><input name="p" type="password" required autocomplete="current-password"></div><button class="btn" id="lb" type="submit">Sign in</button><div id="lm" style="font-size:14px;min-height:20px"></div></form></div>
-<nav><a class="logo" href="#top"><span class="seal">T</span>TARO</a><div class="l"><a href="#services">Services</a><a href="#bridal">Bridal</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div><div class="nb"><button class="btn gh" id="lg" type="button">Login</button><a class="btn" href="#book">Book Now</a></div></nav>
+<nav><a class="logo" href="#top"><img class="lg" src="logo.png" alt="TARO">TARO</a><div class="l"><a href="#services">Services</a><a href="#bridal">Bridal</a><a href="#gallery">Gallery</a><a href="#contact">Contact</a></div><div class="nb"><button class="btn gh" id="lg" type="button">Login</button><a class="btn" href="#book">Book Now</a><button class="hb" id="hb" type="button" aria-label="Menu"><i></i><i></i><i></i></button></div></nav><div class="dv" id="dv"></div><aside class="dr" id="dr"><a href="#top">Home</a><a href="#services">Services</a><a href="#bridal">Bridal</a><a href="#gallery">Gallery</a><a href="#book">Book</a><a href="#contact">Contact</a><a href="app.html" id="lg3">Staff Login</a><small>TARO Signature Salon</small></aside>
 <section class="hero" id="top"><div><span class="eb">Taro · Signature Salon</span><h1>Glow in your <em>signature</em> way.</h1><p>Hair, skin, makeup and bridal artistry, crafted slowly and finished beautifully. Reserve your chair in under a minute.</p><a class="btn" href="#book">Book Appointment</a></div>
-<div class="orb"><div class="ring"></div><div class="blob"><b>T</b></div><i class="sp" style="top:10%;left:20%"></i><i class="sp" style="top:30%;right:4%;animation-delay:-1s"></i><i class="sp" style="bottom:12%;left:8%;animation-delay:-2s"></i><i class="sp" style="bottom:22%;right:16%;animation-delay:-.5s"></i></div></section>
+<div class="orb"><div class="ring"></div><div class="blob"><div class="hlw"><img src="logo.png" alt="TARO Signature Salon"></div></div><i class="sp" style="top:10%;left:20%"></i><i class="sp" style="top:30%;right:4%;animation-delay:-1s"></i><i class="sp" style="bottom:12%;left:8%;animation-delay:-2s"></i><i class="sp" style="bottom:22%;right:16%;animation-delay:-.5s"></i></div></section>
 <div class="mq"><div id="mq"></div></div>
 <section id="services"><span class="eb rv">What we do</span><h2 class="rv">Services made to <em>make you shine</em></h2><div class="tabs rv" id="tabs"></div><div class="grid" id="sv"></div></section>
 <section id="bridal"><div class="split"><div class="big rv">Bridal</div><div class="rv"><span class="eb">Bridal &amp; Party</span><h2>Your day, <em>flawlessly</em> yours.</h2><p>From the first trial to the final touch, we build a look that photographs beautifully and lasts through every ritual and every dance.</p><a class="btn" href="#book">Reserve Your Date</a></div></div></section>
@@ -96,7 +112,7 @@ footer b{color:var(--gold2);display:block;margin-bottom:8px;font:600 18px Fraunc
 <div><label>Notes (optional)</label><textarea name="t" rows="2" maxlength="250"></textarea></div>
 <input class="hp" name="website" tabindex="-1" autocomplete="off">
 <button class="btn" id="go" type="submit">Request Appointment</button><div id="msg"></div></form></section>
-<footer id="contact"><div><b>TARO Signature Salon</b><span id="ad"></span></div><div><b>Hours</b><span id="hr"></span></div><div><b>Talk to us</b><a id="ph"></a><br><a id="wa" target="_blank" rel="noopener">WhatsApp us</a></div><div><b>Team</b><a href="app.html" id="lg2">Staff Login</a></div></footer>
+<footer id="contact"><div><img src="logo.png" alt="TARO" style="width:70px;margin-bottom:10px;display:block"><b>TARO Signature Salon</b><span id="ad"></span></div><div><b>Hours</b><span id="hr"></span></div><div><b>Talk to us</b><a id="ph"></a><br><a id="wa" target="_blank" rel="noopener">WhatsApp us</a></div><div><b>Team</b><a href="app.html" id="lg2">Staff Login</a></div></footer>
 <script>
 // EDIT THESE: your salon details
 const C={url:'https://eidfoikmhgkgnrnooaiz.supabase.co',key:'sb_publishable_gRZ9NbNCCOgqZTgyeZe98Q_4dNbKLoN',phone:'9876543210',wa:'919876543210',addr:'123, Main Road, City Center',hours:'Mon – Sun · 10:00 AM – 8:00 PM',gallery:[]};
@@ -117,8 +133,9 @@ const T=[];for(let m=600;m<=1170;m+=30){const h=Math.floor(m/60),n=m%60;T.push([
 $('sl').innerHTML=T.map(t=>`<button type="button" data-t="${t[0]}">${t[1]}</button>`).join('');
 $('sl').onclick=e=>{if(e.target.dataset.t){slot=e.target.dataset.t;[...$('sl').children].forEach(b=>b.classList.toggle('on',b==e.target))}};
 const f=$('f');f.d.min=new Date().toISOString().slice(0,10);
-const G=[['Bridal','#8c4b5b,#3a1a3a'],['Hair','#6b2c5e,#241820'],['Skin','#b0803a,#3a1a3a'],['Makeup','#E8A5B5,#6b2c5e'],['Nails','#8c4b5b,#b0803a'],['Spa','#3a1a3a,#6b2c5e']];
-$('gal').innerHTML=G.map((g,i)=>`<div style="background-image:${C.gallery[i]?`url(${C.gallery[i]})`:`linear-gradient(150deg,${g[1]})`}">${g[0]}</div>`).join('');
+const ic=p=>`<svg viewBox="0 0 200 200" fill="none" stroke="#F4E2B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const G=[['Bridal','#8c4b5b,#3a1a3a','<path d="M50 90l12-30 22 22 16-34 16 34 22-22 12 30z"/><circle cx="100" cy="135" r="22"/><path d="M92 113l8-12 8 12"/>'],['Hair','#6b2c5e,#241820','<path d="M40 70c20-30 40 30 60 0s40 30 60 0"/><path d="M40 100c20-30 40 30 60 0s40 30 60 0"/><path d="M40 130c20-30 40 30 60 0s40 30 60 0"/>'],['Skin','#b0803a,#3a1a3a','<path d="M100 45c0 0-38 48-38 76a38 38 0 0 0 76 0c0-28-38-76-38-76z"/><path d="M150 50v20M140 60h20M45 60v14M38 67h14"/>'],['Makeup','#E8A5B5,#6b2c5e','<rect x="82" y="110" width="36" height="48" rx="4"/><rect x="88" y="84" width="24" height="26"/><path d="M88 84c0-14 6-24 12-30 6 6 12 16 12 30"/>'],['Nails','#8c4b5b,#b0803a','<rect x="72" y="100" width="56" height="62" rx="12"/><rect x="88" y="62" width="24" height="38" rx="3"/><path d="M96 62V44h8v18"/>'],['Spa','#3a1a3a,#6b2c5e','<path d="M100 150c-30-10-40-40-30-65 20 10 30 30 30 65z"/><path d="M100 150c30-10 40-40 30-65-20 10-30 30-30 65z"/><path d="M100 150c-12-20-12-50 0-75 12 25 12 55 0 75z"/><path d="M55 158c30 14 60 14 90 0"/>']];
+$('gal').innerHTML=G.map((g,i)=>`<div style="background:${C.gallery[i]?`url(${C.gallery[i]}) center/cover`:`linear-gradient(150deg,${g[1]})`}">${C.gallery[i]?'':ic(g[2])}<span>${g[0]}</span></div>`).join('');
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
 document.querySelectorAll('.rv').forEach(x=>io.observe(x));
 function say(t,ok){$('msg').style.color=ok?'#9fd6b0':'#f0a0a0';$('msg').innerHTML=t}
@@ -156,7 +173,12 @@ try{sessionStorage.setItem('taro_web_login','1')}catch(_){}
 location.href='app.html';
 }catch(err){say(err.name=='AbortError'?'Server is not responding. Check your internet, or the Supabase project may be paused.':'Could not reach the server. Check your internet connection.');b.disabled=false}
 finally{clearTimeout(tm)}};
+const hb=$('hb'),dr=$('dr'),dv=$('dv'),setM=o=>[hb,dr,dv].forEach(x=>x.classList.toggle('on',o));
+hb.onclick=()=>setM(!dr.classList.contains('on'));dv.onclick=()=>setM(false);
+document.querySelectorAll('a[href^="#"]').forEach(a=>a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();setM(false);t.scrollIntoView({behavior:'smooth',block:'start'})}}));
+$('lg3').onclick=e=>{setM(false);openL(e)};
+addEventListener('keydown',e=>{if(e.key=='Escape')setM(false)});
 // The Back button restores this page exactly as it was left ("Signing in…" frozen),
 // so reset the login popup every time the page is shown again.
-addEventListener('pageshow',e=>{if(e.persisted){mo.classList.remove('on');lf.reset();$('lb').disabled=false;$('lm').textContent=''}});
+addEventListener('pageshow',e=>{if(e.persisted){setM(false);mo.classList.remove('on');lf.reset();$('lb').disabled=false;$('lm').textContent=''}});
 </script></body></html>
