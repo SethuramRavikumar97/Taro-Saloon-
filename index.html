@@ -4,7 +4,7 @@
 <meta name="description" content="TARO Signature Salon: hair, skin, makeup, bridal and spa. Book your appointment online.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#120a14;--ink:#FAF5EF;--dim:#b9a9b4;--gold:#D9B26D;--gold2:#F4E2B8;--rose:#E8A5B5;--line:rgba(255,255,255,.12);--glass:rgba(255,255,255,.06)}
+:root{--bg:#07140f;--ink:#FAF5EF;--dim:#b9a9b4;--gold:#D9B26D;--gold2:#F4E2B8;--rose:#F7EBC8;--line:rgba(255,255,255,.12);--glass:rgba(255,255,255,.06)}
 *{box-sizing:border-box;margin:0}html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--ink);font:400 16px/1.6 Inter,sans-serif;overflow-x:hidden}
 h1,h2,h3{font-family:Fraunces,serif;font-weight:400;line-height:1.05}
@@ -12,16 +12,16 @@ em{font-style:italic;background:linear-gradient(90deg,var(--gold),var(--rose));-
 a{color:inherit;text-decoration:none}
 .aur{position:fixed;inset:0;z-index:-1;overflow:hidden}
 .aur i{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:dr 18s ease-in-out infinite alternate}
-.aur i:nth-child(1){width:50vw;height:50vw;background:#6b2c5e;top:-15vw;left:-10vw}
+.aur i:nth-child(1){width:50vw;height:50vw;background:#0f5c4d;top:-15vw;left:-10vw}
 .aur i:nth-child(2){width:40vw;height:40vw;background:#b0803a;right:-10vw;top:30vh;animation-delay:-6s;opacity:.35}
-.aur i:nth-child(3){width:35vw;height:35vw;background:#8c4b5b;bottom:-10vw;left:25vw;animation-delay:-11s}
+.aur i:nth-child(3){width:35vw;height:35vw;background:#0e6b57;bottom:-10vw;left:25vw;animation-delay:-11s}
 @keyframes dr{to{transform:translate(6vw,5vh) scale(1.15)}}
-nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:14px 5vw;backdrop-filter:blur(14px);background:rgba(18,10,20,.55);border-bottom:1px solid var(--line)}
+nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:14px 5vw;backdrop-filter:blur(14px);background:rgba(7,20,15,.6);border-bottom:1px solid var(--line)}
 .logo{display:flex;align-items:center;gap:10px;font:600 20px Fraunces,serif;letter-spacing:.14em}
-.seal{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#1a0f1c;font:700 16px Fraunces,serif;background:radial-gradient(circle at 30% 30%,var(--gold2),var(--gold) 70%)}
+.seal{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#0b1f18;font:700 16px Fraunces,serif;background:radial-gradient(circle at 30% 30%,var(--gold2),var(--gold) 70%)}
 nav .l{display:flex;gap:30px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
 nav .l a:hover{color:var(--gold2)}
-.btn{display:inline-block;padding:14px 30px;border:0;border-radius:99px;cursor:pointer;font:600 12px Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#1a0f1c;background:linear-gradient(120deg,var(--gold2),var(--gold));box-shadow:0 10px 40px -10px var(--gold);transition:.3s}
+.btn{display:inline-block;padding:14px 30px;border:0;border-radius:99px;cursor:pointer;font:600 12px Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#0b1f18;background:linear-gradient(120deg,var(--gold2),var(--gold));box-shadow:0 10px 40px -10px var(--gold);transition:.3s}
 .btn:hover{transform:translateY(-3px);box-shadow:0 18px 50px -10px var(--gold)}
 .nb{display:flex;gap:10px;align-items:center}
 .btn.gh{background:none;color:var(--gold2);border:1px solid var(--gold);box-shadow:none}
@@ -36,7 +36,7 @@ h2{font-size:clamp(34px,5vw,64px);margin-bottom:22px}
 h1{font-size:clamp(46px,7.4vw,108px);letter-spacing:-.02em}
 .hero p{max-width:460px;color:var(--dim);margin:26px 0 38px;font-size:18px}
 .orb{position:relative;aspect-ratio:1;max-width:520px;margin:auto;width:100%}
-.blob{position:absolute;inset:8%;background:conic-gradient(from 200deg,#6b2c5e,#E8A5B5,#D9B26D,#8c4b5b,#6b2c5e);animation:mo 12s ease-in-out infinite;display:grid;place-items:center;box-shadow:0 0 120px -20px #b0803a}
+.blob{position:absolute;inset:8%;background:conic-gradient(from 200deg,#0f5c4d,#F2D08A,#D9B26D,#0e6b57,#0f5c4d);animation:mo 12s ease-in-out infinite;display:grid;place-items:center;box-shadow:0 0 120px -20px #b0803a}
 @keyframes mo{0%,100%{border-radius:58% 42% 55% 45%/50% 58% 42% 50%;transform:rotate(0)}50%{border-radius:42% 58% 45% 55%/58% 42% 58% 42%;transform:rotate(8deg)}}
 .blob b{font:italic 600 clamp(90px,16vw,200px) Fraunces,serif;color:rgba(18,10,20,.82)}
 .ring{position:absolute;inset:0;border:1px dashed rgba(217,178,109,.5);border-radius:50%;animation:sp 40s linear infinite}
@@ -49,14 +49,14 @@ h1{font-size:clamp(46px,7.4vw,108px);letter-spacing:-.02em}
 @keyframes mq{to{transform:translateX(-50%)}}
 .tabs{display:flex;flex-wrap:wrap;gap:10px;margin:30px 0}
 .tabs button{padding:10px 20px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--dim);cursor:pointer;font:500 13px Inter,sans-serif;transition:.3s}
-.tabs button.on,.tabs button:hover{background:var(--gold);color:#1a0f1c;border-color:var(--gold)}
+.tabs button.on,.tabs button:hover{background:var(--gold);color:#0b1f18;border-color:var(--gold)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
 .card{padding:28px;border-radius:22px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(10px);transition:.4s;cursor:pointer}
 .card:hover{transform:translateY(-6px);border-color:var(--gold);background:rgba(217,178,109,.08)}
 .card h3{font-size:24px;margin-top:8px}.card small{color:var(--gold);letter-spacing:.2em;text-transform:uppercase;font-size:10px}
 .split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
 .split p{color:var(--dim);margin:0 0 30px;font-size:18px}
-.big{border-radius:30px;min-height:420px;background:radial-gradient(circle at 70% 20%,rgba(244,226,184,.5),transparent 40%),linear-gradient(160deg,#8c4b5b,#3a1a3a 70%);border:1px solid var(--line);display:grid;place-items:center;font:italic 90px Fraunces,serif;color:rgba(255,255,255,.85)}
+.big{border-radius:30px;min-height:420px;background:radial-gradient(circle at 70% 20%,rgba(244,226,184,.5),transparent 40%),linear-gradient(160deg,#0e6b57,#072a22 70%);border:1px solid var(--line);display:grid;place-items:center;font:italic 90px Fraunces,serif;color:rgba(255,255,255,.85)}
 .gal{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
 .gal div{aspect-ratio:4/5;border-radius:20px;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:18px;font:italic 24px Fraunces,serif;border:1px solid var(--line);transition:.4s}
 .gal div:hover{transform:scale(1.03)}
@@ -65,10 +65,10 @@ form{max-width:720px;margin:40px auto 0;padding:40px;border-radius:28px;backgrou
 label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
 input,select,textarea{width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.35);color:var(--ink);font:400 15px Inter,sans-serif}
 input:focus,select:focus,textarea:focus{outline:0;border-color:var(--gold)}
-option{background:#1a0f1c}
+option{background:#0b1f18}
 .sl{display:flex;flex-wrap:wrap;gap:8px}
 .sl button{padding:9px 14px;border-radius:99px;border:1px solid var(--line);background:none;color:var(--ink);cursor:pointer;font:500 12px Inter,sans-serif}
-.sl button.on{background:var(--gold);color:#1a0f1c;border-color:var(--gold)}
+.sl button.on{background:var(--gold);color:#0b1f18;border-color:var(--gold)}
 #msg{text-align:center;min-height:22px;font-size:15px}
 .hp{position:absolute;left:-9999px}
 footer{padding:60px 6vw;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;color:var(--dim)}
@@ -76,22 +76,22 @@ footer b{color:var(--gold2);display:block;margin-bottom:8px;font:600 18px Fraunc
 .rv{opacity:0;transform:translateY(40px);transition:1s cubic-bezier(.2,.7,.2,1)}.rv.in{opacity:1;transform:none}
 @media(max-width:860px){nav .l{display:none}.hero,.split{grid-template-columns:1fr}.orb{max-width:340px}.gal{grid-template-columns:1fr 1fr}.r2{grid-template-columns:1fr}form{padding:24px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
-.mo{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(10,5,12,.78);backdrop-filter:blur(8px)}.mo.on{display:grid}
-.mc{width:min(92vw,400px);max-width:none;margin:0;padding:36px;border-radius:26px;background:#1a0f1c;border:1px solid var(--gold);position:relative}
+.mo{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(3,10,7,.78);backdrop-filter:blur(8px)}.mo.on{display:grid}
+.mc{width:min(92vw,400px);max-width:none;margin:0;padding:36px;border-radius:26px;background:#0b1f18;border:1px solid var(--gold);position:relative}
 .mc h3{font-size:32px}.x{position:absolute;top:12px;right:18px;background:none;border:0;color:var(--dim);font-size:26px;cursor:pointer}
 .lg{width:40px;height:40px;object-fit:contain}
-.hlw{width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#1d1020,#0e060f);display:grid;place-items:center;box-shadow:inset 0 0 50px rgba(0,0,0,.7),0 0 40px rgba(0,0,0,.4)}
+.hlw{width:70%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#0f2b22,#06130e);display:grid;place-items:center;box-shadow:inset 0 0 50px rgba(0,0,0,.7),0 0 40px rgba(0,0,0,.4)}
 .hlw img{width:80%;filter:drop-shadow(0 0 18px rgba(217,178,109,.35))}
 .hb{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--glass);display:grid;place-content:center;gap:5px;cursor:pointer}
 .hb i{display:block;width:20px;height:2px;background:var(--ink);border-radius:2px;transition:.35s}
 .hb.on i:nth-child(1){transform:translateY(7px) rotate(45deg)}.hb.on i:nth-child(2){opacity:0}.hb.on i:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 nav{z-index:50}nav .l{display:none}section{scroll-margin-top:72px}
-.dr{position:fixed;top:0;right:0;bottom:0;width:min(86vw,380px);z-index:40;padding:100px 36px 36px;background:rgba(26,15,28,.97);backdrop-filter:blur(20px);border-left:1px solid var(--gold);transform:translateX(105%);transition:transform .5s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;gap:4px}
+.dr{position:fixed;top:0;right:0;bottom:0;width:min(86vw,380px);z-index:40;padding:100px 36px 36px;background:rgba(9,26,20,.97);backdrop-filter:blur(20px);border-left:1px solid var(--gold);transform:translateX(105%);transition:transform .5s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;gap:4px}
 .dr.on{transform:none}
 .dr a{font:400 34px Fraunces,serif;padding:8px 0;opacity:.85;transition:.3s}
 .dr a:hover{color:var(--gold2);padding-left:10px;opacity:1}
 .dr small{margin-top:auto;color:var(--dim);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
-.dv{position:fixed;inset:0;z-index:30;background:rgba(10,5,12,.6);opacity:0;pointer-events:none;transition:.4s}.dv.on{opacity:1;pointer-events:auto}
+.dv{position:fixed;inset:0;z-index:30;background:rgba(3,10,7,.6);opacity:0;pointer-events:none;transition:.4s}.dv.on{opacity:1;pointer-events:auto}
 .gal div{position:relative;overflow:hidden}.gal svg{position:absolute;left:14%;top:12%;width:72%;height:auto;opacity:.92;transition:.5s}.gal div:hover svg{transform:scale(1.08) rotate(-3deg)}.gal span{position:relative}
 @media(max-width:520px){#lg{display:none}}
 </style></head><body>
@@ -134,7 +134,7 @@ $('sl').innerHTML=T.map(t=>`<button type="button" data-t="${t[0]}">${t[1]}</butt
 $('sl').onclick=e=>{if(e.target.dataset.t){slot=e.target.dataset.t;[...$('sl').children].forEach(b=>b.classList.toggle('on',b==e.target))}};
 const f=$('f');f.d.min=new Date().toISOString().slice(0,10);
 const ic=p=>`<svg viewBox="0 0 200 200" fill="none" stroke="#F4E2B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const G=[['Bridal','#8c4b5b,#3a1a3a','<path d="M50 90l12-30 22 22 16-34 16 34 22-22 12 30z"/><circle cx="100" cy="135" r="22"/><path d="M92 113l8-12 8 12"/>'],['Hair','#6b2c5e,#241820','<path d="M40 70c20-30 40 30 60 0s40 30 60 0"/><path d="M40 100c20-30 40 30 60 0s40 30 60 0"/><path d="M40 130c20-30 40 30 60 0s40 30 60 0"/>'],['Skin','#b0803a,#3a1a3a','<path d="M100 45c0 0-38 48-38 76a38 38 0 0 0 76 0c0-28-38-76-38-76z"/><path d="M150 50v20M140 60h20M45 60v14M38 67h14"/>'],['Makeup','#E8A5B5,#6b2c5e','<rect x="82" y="110" width="36" height="48" rx="4"/><rect x="88" y="84" width="24" height="26"/><path d="M88 84c0-14 6-24 12-30 6 6 12 16 12 30"/>'],['Nails','#8c4b5b,#b0803a','<rect x="72" y="100" width="56" height="62" rx="12"/><rect x="88" y="62" width="24" height="38" rx="3"/><path d="M96 62V44h8v18"/>'],['Spa','#3a1a3a,#6b2c5e','<path d="M100 150c-30-10-40-40-30-65 20 10 30 30 30 65z"/><path d="M100 150c30-10 40-40 30-65-20 10-30 30-30 65z"/><path d="M100 150c-12-20-12-50 0-75 12 25 12 55 0 75z"/><path d="M55 158c30 14 60 14 90 0"/>']];
+const G=[['Bridal','#0e6b57,#072a22','<path d="M50 90l12-30 22 22 16-34 16 34 22-22 12 30z"/><circle cx="100" cy="135" r="22"/><path d="M92 113l8-12 8 12"/>'],['Hair','#0f5c4d,#06231c','<path d="M40 70c20-30 40 30 60 0s40 30 60 0"/><path d="M40 100c20-30 40 30 60 0s40 30 60 0"/><path d="M40 130c20-30 40 30 60 0s40 30 60 0"/>'],['Skin','#b0803a,#072a22','<path d="M100 45c0 0-38 48-38 76a38 38 0 0 0 76 0c0-28-38-76-38-76z"/><path d="M150 50v20M140 60h20M45 60v14M38 67h14"/>'],['Makeup','#F2D08A,#0f5c4d','<rect x="82" y="110" width="36" height="48" rx="4"/><rect x="88" y="84" width="24" height="26"/><path d="M88 84c0-14 6-24 12-30 6 6 12 16 12 30"/>'],['Nails','#0e6b57,#b0803a','<rect x="72" y="100" width="56" height="62" rx="12"/><rect x="88" y="62" width="24" height="38" rx="3"/><path d="M96 62V44h8v18"/>'],['Spa','#072a22,#0f5c4d','<path d="M100 150c-30-10-40-40-30-65 20 10 30 30 30 65z"/><path d="M100 150c30-10 40-40 30-65-20 10-30 30-30 65z"/><path d="M100 150c-12-20-12-50 0-75 12 25 12 55 0 75z"/><path d="M55 158c30 14 60 14 90 0"/>']];
 $('gal').innerHTML=G.map((g,i)=>`<div style="background:${C.gallery[i]?`url(${C.gallery[i]}) center/cover`:`linear-gradient(150deg,${g[1]})`}">${C.gallery[i]?'':ic(g[2])}<span>${g[0]}</span></div>`).join('');
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
 document.querySelectorAll('.rv').forEach(x=>io.observe(x));
