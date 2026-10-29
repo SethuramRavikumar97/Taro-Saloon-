@@ -61,7 +61,7 @@ h1{font-size:clamp(46px,7.4vw,108px);letter-spacing:-.02em}
 .gal div{aspect-ratio:4/5;border-radius:20px;background-size:cover;background-position:center;display:flex;align-items:flex-end;padding:18px;font:italic 24px Fraunces,serif;border:1px solid var(--line);transition:.4s}
 .gal div:hover{transform:scale(1.03)}
 form{max-width:720px;margin:40px auto 0;padding:40px;border-radius:28px;background:var(--glass);border:1px solid var(--line);backdrop-filter:blur(16px);display:grid;gap:16px}
-.r2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.r3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:6px}
 input,select,textarea{width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.35);color:var(--ink);font:400 15px Inter,sans-serif}
 input:focus,select:focus,textarea:focus{outline:0;border-color:var(--gold)}
@@ -92,7 +92,7 @@ nav{z-index:50}nav .l{display:none}section{scroll-margin-top:72px}
 .dr a:hover{color:var(--gold2);padding-left:10px;opacity:1}
 .dr small{margin-top:auto;color:var(--dim);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
 .dv{position:fixed;inset:0;z-index:30;background:rgba(3,10,7,.6);opacity:0;pointer-events:none;transition:.4s}.dv.on{opacity:1;pointer-events:auto}
-.gal div{position:relative;overflow:hidden}.gal svg{position:absolute;left:14%;top:12%;width:72%;height:auto;opacity:.92;transition:.5s}.gal div:hover svg{transform:scale(1.08) rotate(-3deg)}.gal span{position:relative}
+.gal div{position:relative;overflow:hidden}.gal svg{position:absolute;left:14%;top:12%;width:72%;height:auto;opacity:.92;transition:.5s}.gal div:hover svg{transform:scale(1.08) rotate(-3deg)}.gal div::after{content:'';position:absolute;left:0;right:0;bottom:0;height:45%;background:linear-gradient(transparent,rgba(3,10,7,.78));pointer-events:none}.gal span{position:relative;z-index:1;color:var(--gold2)}
 @media(max-width:520px){#lg{display:none}}
 </style></head><body>
 <div class="aur"><i></i><i></i><i></i></div>
@@ -108,14 +108,14 @@ nav{z-index:50}nav .l{display:none}section{scroll-margin-top:72px}
 <form id="f" class="rv" novalidate>
 <div class="r2"><div><label>Your name</label><input name="n" required maxlength="80" autocomplete="name"></div><div><label>Mobile number</label><input name="m" type="tel" required inputmode="numeric" maxlength="10" placeholder="10 digits" autocomplete="tel"></div></div>
 <div class="r2"><div><label>Service</label><select name="s" id="ss" required></select></div><div><label>Preferred date</label><input name="d" type="date" required></div></div>
-<div><label>Preferred time</label><div class="sl" id="sl"></div></div>
+<div><label>Preferred time</label><div class="r3"><select id="th"></select><select id="tm"></select><select id="tp"><option>AM</option><option>PM</option></select></div></div>
 <div><label>Notes (optional)</label><textarea name="t" rows="2" maxlength="250"></textarea></div>
 <input class="hp" name="website" tabindex="-1" autocomplete="off">
 <button class="btn" id="go" type="submit">Request Appointment</button><div id="msg"></div></form></section>
 <footer id="contact"><div><img src="logo.png" alt="TARO" style="width:70px;margin-bottom:10px;display:block"><b>TARO Signature Salon</b><span id="ad"></span></div><div><b>Hours</b><span id="hr"></span></div><div><b>Talk to us</b><a id="ph"></a><br><a id="wa" target="_blank" rel="noopener">WhatsApp us</a></div><div><b>Team</b><a href="app.html" id="lg2">Staff Login</a></div></footer>
 <script>
 // EDIT THESE: your salon details
-const C={url:'https://eidfoikmhgkgnrnooaiz.supabase.co',key:'sb_publishable_gRZ9NbNCCOgqZTgyeZe98Q_4dNbKLoN',phone:'9876543210',wa:'919876543210',addr:'123, Main Road, City Center',hours:'Mon – Sun · 10:00 AM – 8:00 PM',gallery:[]};
+const C={url:'https://eidfoikmhgkgnrnooaiz.supabase.co',key:'sb_publishable_gRZ9NbNCCOgqZTgyeZe98Q_4dNbKLoN',phone:'9876543210',wa:'919876543210',addr:'123, Main Road, City Center',hours:'Mon – Sun · 10:00 AM – 8:00 PM',gallery:['g-bridal.jpg','g-facial.jpg','g-party.jpg','g-skin.jpg','g-hair.jpg','g-gents.jpg']};
 let S=[['Hair','Haircut & Style'],['Hair','Hair Spa'],['Hair','Keratin Treatment'],['Hair Colour','Global Hair Colour'],['Skin','Classic Facial'],['Skin','Hydra Facial'],['Skin','De-tan'],['Makeup','Party Makeup'],['Makeup','Bridal Makeup'],['Nails','Manicure'],['Nails','Pedicure'],['Waxing','Full Arms & Legs Waxing'],['Threading','Eyebrow Threading'],['Spa','Relaxing Massage']];
 const $=i=>document.getElementById(i),H={apikey:C.key,Authorization:'Bearer '+C.key};
 $('ad').textContent=C.addr;$('hr').textContent=C.hours;$('ph').textContent=C.phone;$('ph').href='tel:'+C.phone;$('wa').href='https://wa.me/'+C.wa;
@@ -129,13 +129,13 @@ draw();
 $('tabs').onclick=e=>{if(e.target.dataset.c){cat=e.target.dataset.c;draw()}};
 $('sv').onclick=e=>{const c=e.target.closest('.card');if(c){$('ss').value=c.dataset.s;location.hash='book'}};
 fetch(C.url+'/rest/v1/services?select=name,category&order=category',{headers:H}).then(r=>r.ok?r.json():[]).then(d=>{if(d.length){S=d.map(x=>[x.category||'General',x.name]);draw()}}).catch(()=>{});
-const T=[];for(let m=600;m<=1170;m+=30){const h=Math.floor(m/60),n=m%60;T.push([String(h).padStart(2,'0')+':'+String(n).padStart(2,'0'),(h>12?h-12:h)+':'+String(n).padStart(2,'0')+(h>=12?' PM':' AM')])}
-$('sl').innerHTML=T.map(t=>`<button type="button" data-t="${t[0]}">${t[1]}</button>`).join('');
-$('sl').onclick=e=>{if(e.target.dataset.t){slot=e.target.dataset.t;[...$('sl').children].forEach(b=>b.classList.toggle('on',b==e.target))}};
+$('th').innerHTML='<option value="">Hour</option>'+[...Array(12)].map((_,i)=>`<option>${i+1}</option>`).join('');
+$('tm').innerHTML='<option value="">Min</option>'+[...Array(12)].map((_,i)=>{const v=String(i*5).padStart(2,'0');return `<option>${v}</option>`}).join('');
 const f=$('f');f.d.min=new Date().toISOString().slice(0,10);
 const ic=p=>`<svg viewBox="0 0 200 200" fill="none" stroke="#F4E2B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const G=[['Bridal','#0e6b57,#072a22','<path d="M50 90l12-30 22 22 16-34 16 34 22-22 12 30z"/><circle cx="100" cy="135" r="22"/><path d="M92 113l8-12 8 12"/>'],['Hair','#0f5c4d,#06231c','<path d="M40 70c20-30 40 30 60 0s40 30 60 0"/><path d="M40 100c20-30 40 30 60 0s40 30 60 0"/><path d="M40 130c20-30 40 30 60 0s40 30 60 0"/>'],['Skin','#b0803a,#072a22','<path d="M100 45c0 0-38 48-38 76a38 38 0 0 0 76 0c0-28-38-76-38-76z"/><path d="M150 50v20M140 60h20M45 60v14M38 67h14"/>'],['Makeup','#F2D08A,#0f5c4d','<rect x="82" y="110" width="36" height="48" rx="4"/><rect x="88" y="84" width="24" height="26"/><path d="M88 84c0-14 6-24 12-30 6 6 12 16 12 30"/>'],['Nails','#0e6b57,#b0803a','<rect x="72" y="100" width="56" height="62" rx="12"/><rect x="88" y="62" width="24" height="38" rx="3"/><path d="M96 62V44h8v18"/>'],['Spa','#072a22,#0f5c4d','<path d="M100 150c-30-10-40-40-30-65 20 10 30 30 30 65z"/><path d="M100 150c30-10 40-40 30-65-20 10-30 30-30 65z"/><path d="M100 150c-12-20-12-50 0-75 12 25 12 55 0 75z"/><path d="M55 158c30 14 60 14 90 0"/>']];
-$('gal').innerHTML=G.map((g,i)=>`<div style="background:${C.gallery[i]?`url(${C.gallery[i]}) center/cover`:`linear-gradient(150deg,${g[1]})`}">${C.gallery[i]?'':ic(g[2])}<span>${g[0]}</span></div>`).join('');
+const G=[['Bridal','#0e6b57,#072a22','<path d="M50 90l12-30 22 22 16-34 16 34 22-22 12 30z"/><circle cx="100" cy="135" r="22"/><path d="M92 113l8-12 8 12"/>'],['Facial','#0f5c4d,#06231c','<path d="M40 70c20-30 40 30 60 0s40 30 60 0"/><path d="M40 100c20-30 40 30 60 0s40 30 60 0"/><path d="M40 130c20-30 40 30 60 0s40 30 60 0"/>'],['Party Glam','#b0803a,#072a22','<path d="M100 45c0 0-38 48-38 76a38 38 0 0 0 76 0c0-28-38-76-38-76z"/><path d="M150 50v20M140 60h20M45 60v14M38 67h14"/>'],['Skin Care','#F2D08A,#0f5c4d','<rect x="82" y="110" width="36" height="48" rx="4"/><rect x="88" y="84" width="24" height="26"/><path d="M88 84c0-14 6-24 12-30 6 6 12 16 12 30"/>'],['Hair Styling','#0e6b57,#b0803a','<rect x="72" y="100" width="56" height="62" rx="12"/><rect x="88" y="62" width="24" height="38" rx="3"/><path d="M96 62V44h8v18"/>'],['Gents Style','#072a22,#0f5c4d','<path d="M100 150c-30-10-40-40-30-65 20 10 30 30 30 65z"/><path d="M100 150c30-10 40-40 30-65-20 10-30 30-30 65z"/><path d="M100 150c-12-20-12-50 0-75 12 25 12 55 0 75z"/><path d="M55 158c30 14 60 14 90 0"/>']];
+const P=['center 28%','center 45%','center 30%','center 45%','center 18%','center 15%'];
+$('gal').innerHTML=G.map((g,i)=>`<div style="background:${C.gallery[i]?`url(${C.gallery[i]}) ${P[i]||'center'}/cover`:`linear-gradient(150deg,${g[1]})`}">${C.gallery[i]?'':ic(g[2])}<span>${g[0]}</span></div>`).join('');
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
 document.querySelectorAll('.rv').forEach(x=>io.observe(x));
 function say(t,ok){$('msg').style.color=ok?'#9fd6b0':'#f0a0a0';$('msg').innerHTML=t}
@@ -143,14 +143,17 @@ f.onsubmit=async e=>{e.preventDefault();if(f.website.value)return;
 const n=f.n.value.trim(),m=f.m.value.trim(),s=f.s.value,d=f.d.value;
 if(n.length<2)return say('Please enter your name.');
 if(!/^\d{10}$/.test(m))return say('Please enter a valid 10-digit mobile number.');
-if(!s||!d||!slot)return say('Please choose a service, date and time.');
+if(!s||!d||!$('th').value||!$('tm').value)return say('Please choose a service, date and time.');
+slot=String(+$('th').value%12+($('tp').value=='PM'?12:0)).padStart(2,'0')+':'+$('tm').value;
+const now=new Date(),td=new Date(now-now.getTimezoneOffset()*60000).toISOString().slice(0,10);
+if(d==td&&(+slot.slice(0,2)*60+ +slot.slice(3))<=now.getHours()*60+now.getMinutes())return say('That time has already passed. Please pick a later time.');
 let last=0;try{last=+localStorage.getItem('tb')||0}catch(_){}
 if(Date.now()-last<30000)return say('Please wait a few seconds before booking again.');
 $('go').disabled=true;say('Sending your request…',1);
 const row={id:'AP'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),date:d,time:slot,customer_name:n,customer_mobile:m,service_name:s,stylist:'',status:'Pending',notes:('Booked via website. '+f.t.value.trim()).slice(0,290)};
 try{const r=await fetch(C.url+'/rest/v1/appointments',{method:'POST',headers:{...H,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(row)});
 if(!r.ok)throw 0;try{localStorage.setItem('tb',Date.now())}catch(_){}
-f.reset();slot='';[...$('sl').children].forEach(b=>b.classList.remove('on'));say('✦ Thank you, '+n.split(' ')[0]+'! Your request is in. We will confirm shortly.',1)}
+f.reset();slot='';say('✦ Thank you, '+n.split(' ')[0]+'! Your request is in. We will confirm shortly.',1)}
 catch(_){say('Sorry, we could not send that. Please call <a href="tel:'+C.phone+'" style="color:var(--gold)">'+C.phone+'</a>.')}
 $('go').disabled=false};
 // Staff login right on this page: signs in with the same Supabase project as the software,
