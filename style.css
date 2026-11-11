@@ -543,3 +543,16 @@ main{padding-top:68px}
   .modal{max-width:none !important;width:100% !important;box-shadow:none !important;border-radius:0 !important;padding:0 !important;background:none !important}
   .modal .receipt{margin:0 !important;border:none !important;box-shadow:none !important}
 }
+
+
+/* ---------- Menu toggle: round arrow tab on the sidebar edge ---------- */
+.menu-btn{width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--gold-soft);border:1.5px solid var(--gold);left:203px;top:22px;gap:0;box-shadow:0 6px 18px rgba(0,0,0,.28);transition:left .35s cubic-bezier(.2,.7,.2,1),transform .2s,background .2s,color .2s}
+.menu-btn:hover{background:var(--gold);color:var(--ink);transform:scale(1.1)}
+.menu-btn svg{transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.app.nav-closed .menu-btn{left:14px}
+.app.nav-closed .menu-btn svg{transform:rotate(180deg)}
+@media (max-width:768px){
+  .menu-btn{top:14px}
+  .app:not(.nav-closed) .menu-btn{left:243px}
+  .app.nav-closed .menu-btn{left:12px}
+}
