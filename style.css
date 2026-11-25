@@ -556,3 +556,19 @@ main{padding-top:68px}
   .app:not(.nav-closed) .menu-btn{left:243px}
   .app.nav-closed .menu-btn{left:12px}
 }
+
+/* ---------- THERMAL RECEIPT PRINTING (80mm roll). For a 58mm printer change 80mm -> 58mm and 72mm -> 52mm ---------- */
+@media print{
+  @page{size:80mm auto;margin:0}
+  html,body{width:80mm !important;margin:0 !important;padding:0 !important}
+  .modal-backdrop{width:80mm !important}
+  .modal{width:72mm !important;max-width:72mm !important;margin:0 auto !important}
+  .modal .receipt{width:72mm !important;padding:2mm 1mm !important;font-size:11px !important;line-height:1.35 !important;color:#000 !important;font-family:'IBM Plex Mono',monospace}
+  .modal .receipt *{color:#000 !important;box-shadow:none !important;text-shadow:none !important}
+  .modal .receipt [style*="font-size"]{font-size:11px !important}
+  .modal .receipt .receipt-salon{font-size:14px !important;font-weight:700}
+  .modal .receipt .receipt-total-row.grand{font-size:13px !important}
+  .modal .receipt .seal,.modal .receipt .seal-img{width:13mm !important;height:13mm !important;margin:0 auto 2mm !important;font-size:12px !important}
+  .modal .receipt img{max-width:20mm !important;height:auto !important}
+  .modal .receipt .tag{border:none !important;background:none !important;padding:0 !important}
+}
