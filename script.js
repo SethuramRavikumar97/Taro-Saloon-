@@ -1735,13 +1735,15 @@ async function logout(){
   if(state.auth.user){
     logActivity('Logout', `${state.auth.user.role} logged out`);
   }
-  if(sb){
-    await sb.auth.signOut();
-  }
+  // Show the logged-out screen immediately — never wait on the network first.
   try{ localStorage.removeItem('taro_auth'); }catch(e){}
   state.auth = { isAuthenticated: false, user: null };
   state.tab = 'dashboard';
   render();
+  if(sb){
+    try{ await Promise.race([sb.auth.signOut(), new Promise(r=>setTimeout(r,4000))]); }catch(e){}
+    try{ Object.keys(localStorage).filter(k=>/^sb-.*-auth-token/.test(k)).forEach(k=>localStorage.removeItem(k)); }catch(e){}
+  }
 }
 
 // On page load: if Supabase is connected, ask it for any existing session
