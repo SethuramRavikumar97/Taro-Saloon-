@@ -5,7 +5,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--cream:#FBF3EC;--sand:#F3E2D6;--rose:#DDAE9A;--copper:#B5694F;--deep:#5B2E26;--cg:linear-gradient(135deg,#E6B7A2,#B5694F 55%,#D0937A)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}
+*{box-sizing:border-box}
 body{margin:0;font:16px/1.6 Inter,sans-serif;color:var(--deep);background:radial-gradient(circle at 12% 8%,#fff 0,transparent 40%),var(--cream)}
 h1,h2,h3{font-family:Fraunces,serif;margin:0;line-height:1.12}h1 em,h2 em{font-style:italic;font-weight:500}
 .w{max-width:1100px;margin:0 auto;padding:0 22px}
@@ -92,51 +92,87 @@ footer{background:linear-gradient(180deg,rgba(154,86,64,.72),rgba(110,55,40,.86)
 .gg::-webkit-scrollbar{display:none}.gg div{flex:0 0 min(300px,76%);scroll-snap-align:center}
 .gb{position:absolute;top:50%;transform:translateY(-60%);left:4px;z-index:2;width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.45);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--copper);font-size:28px;line-height:1;cursor:pointer;box-shadow:0 8px 20px rgba(120,60,45,.25),inset 0 1px 0 rgba(255,255,255,.9)}.gb.n{left:auto;right:4px}
 .gd{display:flex;gap:8px;justify-content:center;margin-top:4px}.gd i{width:8px;height:8px;border-radius:99px;background:rgba(181,105,79,.3);cursor:pointer;transition:all .25s}.gd i.on{width:26px;background:var(--copper)}
-</style></head><body>
+.pt{background:linear-gradient(150deg,rgba(255,255,255,.62),rgba(255,255,255,.14));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.pt svg{position:absolute;left:12%;top:5%;width:76%;height:68%;filter:drop-shadow(0 8px 10px rgba(91,46,38,.35))}
+.nb{gap:8px}
+@media(max-width:520px){.lt{display:none}.logo{font-size:15px;letter-spacing:.14em}.nb .btn.sm{padding:9px 12px;letter-spacing:.1em}}
+/* FIT TO SCREEN + chocolate logo backdrop */
+html{overflow-x:hidden;-webkit-text-size-adjust:100%}
+img,svg,iframe{max-width:100%}
+.hg>*,.cg>*,.r2>*,.r3>*{min-width:0}input,select,textarea{min-width:0;max-width:100%}
+.hero{min-height:calc(100vh - 68px);min-height:calc(100svh - 68px);display:flex;align-items:center;padding:32px 0}
+.hero .hg{width:100%}
+.hero h1{font-size:clamp(34px,7.2vw,72px)}
+.med{width:min(340px,76%,50vh);background:radial-gradient(circle at 35% 28%,#5E3629,#3B1F17 62%,#26120C);backdrop-filter:none;-webkit-backdrop-filter:none;border:1px solid rgba(226,176,146,.55);box-shadow:0 30px 60px rgba(50,22,14,.5),inset 0 2px 0 rgba(255,215,185,.3),inset 0 -4px 12px rgba(0,0,0,.4)}
+.logo img{background:#3B1F17;padding:2px}
+@media(max-width:820px){.hero{padding:24px 0}.med{width:min(300px,68vw,34vh)}}
+@media(max-width:520px){.w{padding:0 14px}nav .w{padding:0 12px}.sec{padding:44px 0}.sv{padding:40px 0}.cg iframe{min-height:240px}.hb{width:38px}form.card{padding:20px 16px}.mc{padding:22px 18px}}
+/* PAGE VIEWS */
+[data-v]{display:none!important}[data-v].on{display:block!important}.hero.on{display:flex!important}
+[data-v].on:not(.hero){min-height:calc(100svh - var(--nh) - 110px)}
+.pgv{animation:vin .5s ease both}@keyframes vin{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+#ld{position:fixed;top:0;left:0;height:3px;width:0;opacity:0;background:linear-gradient(90deg,#E6B7A2,#B5694F);z-index:99;transition:width .45s ease,opacity .3s}
+.l a.on{color:var(--copper);font-weight:600}
+/* FLUID SCALE: adapts to any display size */
+:root{--nh:clamp(60px,4.6vw,84px)}
+html{font-size:clamp(15px,.35vw + 12.6px,21px)}body{font-size:1rem}
+.w{max-width:clamp(1100px,82vw,1560px);padding:0 clamp(14px,3vw,56px)}
+nav .w{height:var(--nh)}.hero{min-height:calc(100svh - var(--nh))}
+.sec h2,.sv h2{font-size:clamp(26px,3vw,56px)}
+@media(max-width:820px){.l.on{top:var(--nh)}}
+@media(min-width:821px){.hero h1{font-size:clamp(40px,6vw,104px)}.hero p{font-size:clamp(16px,1.5vw,30px);max-width:36em}.med{width:min(clamp(300px,28vw,560px),76%,52vh)}.gg div{flex:0 0 clamp(240px,24vw,400px)}}
+@media(min-width:521px){.btn{font-size:.78rem}.l a{font-size:.92rem}.logo{font-size:1.2rem}.logo svg,.logo img{width:2.6rem;height:2.6rem}.s3 b{font-size:1.1rem}.s3 span{font-size:.9rem;max-width:18em}.pt span,.gg span{font-size:.82rem}.tg blockquote{font-size:.95rem}label{font-size:.72rem}input,select,textarea{font-size:.95rem}footer small{font-size:.74rem}.ci b{font-size:.75rem}}
+/* gallery hover zoom */
+.gg div{position:relative;overflow:hidden}.gg b{position:absolute;inset:0;transition:transform .6s ease}.gg div:hover b{transform:scale(1.09)}.gg span{position:relative;z-index:1}
+/* booking success */
+.ok{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:rgba(255,250,246,.95);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);z-index:5;border-radius:inherit;margin:0!important}.ok.on{display:flex}
+.ok svg{width:100px;height:100px;fill:none;stroke:#3f7a4f;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.ok circle{stroke-dasharray:152;stroke-dashoffset:152;animation:dr .7s .1s forwards}.ok path{stroke-dasharray:40;stroke-dashoffset:40;animation:dr .45s .7s forwards}
+@keyframes dr{to{stroke-dashoffset:0}}.ok h3{font-size:1.5rem;margin:14px 0 6px;color:#3f7a4f}.ok p{margin:0 0 16px}
+</style></head><body><div id="ld"></div>
 <svg width="0" height="0" style="position:absolute"><defs>
 <linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3CDB9"/><stop offset=".5" stop-color="#B5694F"/><stop offset="1" stop-color="#E4A88F"/></linearGradient>
-<radialGradient id="cd" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#DC9F87"/><stop offset=".6" stop-color="#9C5440"/><stop offset="1" stop-color="#6E3328"/></radialGradient>
+<linearGradient id="pgr1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F3CBB6"/><stop offset="1" stop-color="#B5694F"/></linearGradient><linearGradient id="pgr2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#D79A83"/><stop offset="1" stop-color="#7C4130"/></linearGradient><linearGradient id="pgr3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FCEBD8"/><stop offset="1" stop-color="#D7A483"/></linearGradient><linearGradient id="pgr4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F9D8CD"/><stop offset="1" stop-color="#D4806F"/></linearGradient><linearGradient id="pc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A25A44"/><stop offset="1" stop-color="#5B2E26"/></linearGradient><radialGradient id="cd" cx=".35" cy=".3" r=".9"><stop offset="0" stop-color="#DC9F87"/><stop offset=".6" stop-color="#9C5440"/><stop offset="1" stop-color="#6E3328"/></radialGradient>
 <symbol id="med" viewBox="0 0 200 200"><circle cx="100" cy="100" r="97" fill="url(#cg)"/><circle cx="100" cy="100" r="87" fill="#F7E6DB"/><circle cx="100" cy="100" r="81" fill="url(#cd)"/><circle cx="100" cy="100" r="71" fill="none" stroke="#F3D6C4" stroke-width="1.5" opacity=".7"/><text x="100" y="116" text-anchor="middle" font-family="Fraunces,serif" font-style="italic" font-weight="600" font-size="66" fill="#FBE9DC">TR</text><g stroke="#FBE9DC" stroke-width="3" stroke-linecap="round" fill="none"><path d="M78 132l44 26M122 132l-44 26"/><circle cx="127" cy="164" r="7"/><circle cx="73" cy="164" r="7"/></g></symbol></defs></svg>
 
 <div class="mo" id="mo"><form class="mc" id="lf" novalidate><button type="button" class="x" id="lx" aria-label="Close">×</button><h3>Staff <em>login</em></h3><div><label>Email</label><input name="e" type="email" required autocomplete="username"></div><div><label>Password</label><input name="p" type="password" required autocomplete="current-password"></div><button class="btn" id="lb" type="submit">Sign in</button><div id="lm"></div></form></div>
 
-<nav><div class="w"><a class="logo" href="#top"><img src="logo.png" alt="TARO" onerror="fb(this)">TARO</a>
-<div class="l" id="ml"><a href="#services">Services</a><a href="#products">Products</a><a href="#gallery">Gallery</a><a href="#artists">Artists</a><a href="#contact">Contact</a></div>
-<div class="nb"><a class="btn sm" href="#book">Book Now</a><button class="hb" id="hb" type="button" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></div></nav>
+<nav><div class="w"><a class="logo" href="#home" data-go="home"><img src="logo.png" alt="TARO" onerror="fb(this)">TARO</a>
+<div class="l" id="ml"><a href="#home" data-go="home">Home</a><a href="#services" data-go="services">Services</a><a href="#products" data-go="products">Products</a><a href="#gallery" data-go="gallery">Gallery</a><a href="#reviews" data-go="reviews">Reviews</a><a href="#contact" data-go="contact">Contact</a></div>
+<div class="nb"><a class="btn sm gh" id="lg2" href="app.html"><span class="lt">Staff </span>Login</a><a class="btn sm" href="#book" data-go="book">Book Now</a><button class="hb" id="hb" type="button" aria-label="Menu"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button></div></div></nav>
 
-<header class="hero" id="top"><div class="wm"></div><div class="w hg"><div><h1>Glow in your <em>signature way.</em></h1><p>Hair, skin, makeup and bridal artistry, crafted slowly and finished beautifully. Reserve your chair in under a minute.</p><a class="btn" href="#book">Book Appointment</a></div>
+<header class="hero" id="top" data-v="home"><div class="wm"></div><div class="w hg"><div><h1>Glow in your <em>signature way.</em></h1><p>Hair, skin, makeup and bridal artistry, crafted slowly and finished beautifully. Reserve your chair in under a minute.</p><a class="btn" href="#book" data-go="book">Book Appointment</a></div>
 <img class="med" src="logo.png" alt="TARO" onerror="fb(this)"></div></header>
 
-<section class="sv" id="services"><div class="w"><h2>Our Services</h2><div class="s3">
-<a href="#book"><svg viewBox="0 0 48 48"><circle cx="14" cy="38" r="5"/><circle cx="34" cy="38" r="5"/><path d="M17 34L34 8M31 34L14 8"/></svg><b>Hair Styling</b><span>Cuts, colour, keratin and spa rituals tailored to you.</span></a>
-<a href="#book"><svg viewBox="0 0 48 48"><path d="M20 42h8V28h-8zM21 28l3-14 3 14M17 46h14"/><path d="M38 10v8M34 14h8"/></svg><b>Makeup Artistry</b><span>Party, HD and airbrush looks that last all day.</span></a>
-<a href="#book"><svg viewBox="0 0 48 48"><circle cx="24" cy="32" r="10"/><path d="M18 22l6-10 6 10M24 12V6"/></svg><b>Bridal Packages</b><span>Complete bridal and groom packages, start to finish.</span></a>
+<section class="sv" id="services" data-v="services"><div class="w"><h2>Our Services</h2><div class="s3">
+<a href="#book" data-go="book"><svg viewBox="0 0 48 48"><circle cx="14" cy="38" r="5"/><circle cx="34" cy="38" r="5"/><path d="M17 34L34 8M31 34L14 8"/></svg><b>Hair Styling</b><span>Cuts, colour, keratin and spa rituals tailored to you.</span></a>
+<a href="#book" data-go="book"><svg viewBox="0 0 48 48"><path d="M20 42h8V28h-8zM21 28l3-14 3 14M17 46h14"/><path d="M38 10v8M34 14h8"/></svg><b>Makeup Artistry</b><span>Party, HD and airbrush looks that last all day.</span></a>
+<a href="#book" data-go="book"><svg viewBox="0 0 48 48"><circle cx="24" cy="32" r="10"/><path d="M18 22l6-10 6 10M24 12V6"/></svg><b>Bridal Packages</b><span>Complete bridal and groom packages, start to finish.</span></a>
 </div></div></section>
 
-<section class="sec" id="products"><div class="w"><h2>Featured Products</h2><div class="pg" id="pg"></div></div></section>
-<section class="sec alt" id="gallery"><div class="w"><h2>Our Gallery</h2><div class="gw"><button class="gb" id="gp" type="button" aria-label="Previous">‹</button><div class="gg" id="gg"></div><button class="gb n" id="gn" type="button" aria-label="Next">›</button></div><div class="gd" id="gd"></div></div></section>
-<section class="sec" id="artists"><div class="w"><h2>Artist Profiles</h2><div class="ag" id="ag"></div></div></section>
-<section class="sec alt"><div class="w"><h2>Client Testimonials</h2><div class="tg" id="tg"></div></div></section>
+<section class="sec" id="products" data-v="products"><div class="w"><h2>Featured Products</h2><div class="pg" id="pg"></div></div></section>
+<section class="sec alt" id="gallery" data-v="gallery"><div class="w"><h2>Our Gallery</h2><div class="gw"><button class="gb" id="gp" type="button" aria-label="Previous">‹</button><div class="gg" id="gg"></div><button class="gb n" id="gn" type="button" aria-label="Next">›</button></div><div class="gd" id="gd"></div></div></section>
+<section class="sec alt" id="reviews" data-v="reviews"><div class="w"><h2>Client Testimonials</h2><div class="tg" id="tg"></div></div></section>
 
-<section class="sec" id="contact"><div class="w"><h2>Contact &amp; Location</h2><div class="cg"><iframe id="mp" title="Map" loading="lazy"></iframe>
+<section class="sec" id="contact" data-v="contact"><div class="w"><h2>Contact &amp; Location</h2><div class="cg"><iframe id="mp" title="Map" loading="lazy"></iframe>
 <div class="ci"><p><b>Address</b><span id="ad"></span></p><p><b>Hours</b><span id="hr"></span></p><p><b>Call</b><a id="ph"></a></p><p><b>WhatsApp</b><a id="wa" target="_blank" rel="noopener">Chat with us</a></p></div></div></div></section>
 
-<section class="sec" id="book"><div class="w"><h2>Book your <em>appointment</em></h2>
+<section class="sec" id="book" data-v="book"><div class="w"><h2>Book your <em>appointment</em></h2>
 <form id="f" class="card" novalidate>
 <div class="r2"><div><label>Your name</label><input name="n" required maxlength="80" autocomplete="name"></div><div><label>Mobile number</label><input name="m" type="tel" required inputmode="numeric" maxlength="10" placeholder="10 digits" autocomplete="tel"></div></div>
 <div class="r2"><div><label>Service</label><select name="s" id="ss" required></select></div><div><label>Preferred date</label><input name="d" type="date" required></div></div>
 <div><label>Preferred time</label><div class="r3"><select id="th"></select><select id="tm"></select><select id="tp"><option>AM</option><option>PM</option></select></div></div>
 <div><label>Notes (optional)</label><textarea name="t" rows="2" maxlength="250"></textarea></div>
 <input class="hp" name="website" tabindex="-1" autocomplete="off">
-<button class="btn" id="go" type="submit">Request Appointment</button><div id="msg"></div></form></div></section>
+<button class="btn" id="go" type="submit">Request Appointment</button><div id="msg"></div><div class="ok" id="ok"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M14 27l8 8 16-17"/></svg><h3>Your appointment is booked!</h3><p>Thanks for choosing TARO Salon. We will confirm shortly.</p><button class="btn sm" type="button" id="okb">Done</button></div></form></div></section>
 
-<footer><div class="so"><a href="#" aria-label="Instagram">IG</a><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Pinterest">P</a></div><small>© 2026 TARO SALON. ALL RIGHTS RESERVED. · <a href="app.html" id="lg2">Staff Login</a></small></footer>
+<footer><div class="so"><a href="#" aria-label="Instagram">IG</a><a href="#" aria-label="Facebook">f</a><a href="#" aria-label="Pinterest">P</a></div><small>© 2026 All Rights reserved by Framecraft.</small></footer>
 
 <script>
 // EDIT THESE: your salon details, product tiles, artists and testimonials. Add an image file name to 'img' to show a real photo.
 const C={url:'https://eidfoikmhgkgnrnooaiz.supabase.co',key:'sb_publishable_gRZ9NbNCCOgqZTgyeZe98Q_4dNbKLoN',phone:'9876543210',wa:'919876543210',addr:'123, Main Road, City Center',hours:'Mon – Sun · 10:00 AM – 8:00 PM',
 gallery:[['Bridal','g-bridal.jpg','center 28%'],['Facial','g-facial.jpg','center 45%'],['Party Glam','g-party.jpg','center 30%'],['Skin Care','g-skin.jpg','center 45%'],['Hair Styling','g-hair.jpg','center 18%'],['Gents Style','g-gents.jpg','center 15%']],
-products:[['Argan Shampoo',''],['Keratin Serum',''],['Hydrating Cream',''],['Sunscreen SPF 50',''],['Nail Colour',''],['Hair Oil',''],['Glow Serum',''],['Body Butter','']],
+products:[['Argan Shampoo','','bottle',1],['Keratin Serum','','dropper',2],['Hydrating Cream','','jar',3],['Sunscreen SPF 50','','tube',4],['Nail Colour','','polish',2],['Hair Oil','','bottle',4],['Glow Serum','','dropper',3],['Body Butter','','jar',1]],
 team:[['Anitha','Senior Stylist',''],['Fathima','Makeup Artist',''],['Ravi','Hair Specialist',''],['Divya','Skin Expert','']],
 quotes:[['Loved my bridal look — calm, careful and on time.','Priya R.'],['The best facial I have had. My skin glowed for days.','Meena I.'],['Friendly team and a beautiful space. Booking was so easy.','Divya S.']]};
 const $=i=>document.getElementById(i),H={apikey:C.key,Authorization:'Bearer '+C.key};
@@ -144,26 +180,32 @@ $('ad').textContent=C.addr;$('hr').textContent=C.hours;$('ph').textContent=C.pho
 $('mp').src='https://www.google.com/maps?q='+encodeURIComponent(C.addr)+'&output=embed';
 const tone=['#C98A73,#8E4A38','#E2B09B,#B5694F','#D6A08A,#9C5440','#EBC3B0,#C27B62'];
 function fb(i){i.outerHTML='<svg class="'+i.className+'" viewBox="0 0 200 200"><use href="#med"/></svg>'}
-$('gg').innerHTML=C.gallery.map((g,i)=>`<div style="background:url(${g[1]}) ${g[2]||'center'}/cover,linear-gradient(150deg,${tone[i%4]})"><span>${g[0]}</span></div>`).join('');
+$('gg').innerHTML=C.gallery.map((g,i)=>`<div><b style="background:url(${g[1]}) ${g[2]||'center'}/cover,linear-gradient(150deg,${tone[i%4]})"></b><span>${g[0]}</span></div>`).join('');
 const gg=$('gg'),gd=$('gd');let gi=0,gt,gr;
 gd.innerHTML=C.gallery.map(()=>'<i></i>').join('');
 const dots=()=>[...gd.children].forEach((d,i)=>d.classList.toggle('on',i==gi));
 function go(i){const n=gg.children.length,el=gg.children[gi=(i+n)%n];gg.scrollTo({left:el.offsetLeft-(gg.clientWidth-el.offsetWidth)/2,behavior:'smooth'});dots()}
-const ap=()=>{clearInterval(gt);if(!matchMedia('(prefers-reduced-motion:reduce)').matches)gt=setInterval(()=>go(gi+1),3500)};
+const ap=()=>{clearInterval(gt);if(!matchMedia('(prefers-reduced-motion:reduce)').matches)gt=setInterval(()=>{if(gg.offsetWidth)go(gi+1)},3500)};
 $('gp').onclick=()=>{go(gi-1);ap()};$('gn').onclick=()=>{go(gi+1);ap()};
 gd.onclick=e=>{const i=[...gd.children].indexOf(e.target);if(i>-1){go(i);ap()}};
 gg.addEventListener('scroll',()=>{cancelAnimationFrame(gr);gr=requestAnimationFrame(()=>{const c=gg.scrollLeft+gg.clientWidth/2;let b=0,d=1e9;[...gg.children].forEach((el,i)=>{const m=Math.abs(el.offsetLeft+el.offsetWidth/2-c);if(m<d){d=m;b=i}});gi=b;dots()})},{passive:true});
 ['mouseenter','touchstart'].forEach(v=>gg.parentNode.addEventListener(v,()=>clearInterval(gt),{passive:true}));
 ['mouseleave','touchend'].forEach(v=>gg.parentNode.addEventListener(v,ap,{passive:true}));
 dots();ap();
-$('pg').innerHTML=C.products.map((p,i)=>`<div class="pt" style="background:${p[1]?`url(${p[1]})`:`linear-gradient(150deg,${tone[i%4]})`};background-size:cover">${p[1]?'':`<i>${p[0][0]}</i>`}<span>${p[0]}</span></div>`).join('');
-$('ag').innerHTML=C.team.map((t,i)=>`<div><div class="av" style="background:${t[2]?`url(${t[2]}) center/cover`:`linear-gradient(150deg,${tone[i%4]})`}">${t[2]?'':t[0][0]}</div><b>${t[0]}</b><small>${t[1]}</small></div>`).join('');
+const W='<rect x="36" y="52" width="4" height="30" rx="2" fill="#fff" opacity=".38"/>';
+const ICON={
+bottle:g=>`<rect x="40" y="12" width="20" height="12" rx="3" fill="url(#pc)"/><rect x="42" y="23" width="16" height="12" fill="url(#pgr${g})"/><rect x="30" y="34" width="40" height="52" rx="10" fill="url(#pgr${g})"/><rect x="36" y="50" width="28" height="22" rx="3" fill="#fff" opacity=".75"/>${W}`,
+dropper:g=>`<ellipse cx="50" cy="20" rx="7" ry="12" fill="url(#pc)"/><rect x="40" y="31" width="20" height="7" rx="2" fill="url(#pc)"/><rect x="44" y="37" width="12" height="9" fill="url(#pgr${g})"/><rect x="32" y="44" width="36" height="42" rx="8" fill="url(#pgr${g})"/><rect x="38" y="58" width="24" height="18" rx="3" fill="#fff" opacity=".75"/>${W}`,
+jar:g=>`<rect x="18" y="34" width="64" height="18" rx="6" fill="url(#pc)"/><rect x="20" y="50" width="60" height="38" rx="9" fill="url(#pgr${g})"/><rect x="30" y="60" width="40" height="18" rx="3" fill="#fff" opacity=".75"/>`,
+tube:g=>`<rect x="40" y="8" width="20" height="14" rx="3" fill="url(#pc)"/><path d="M32 22h36l-2 58H34z" fill="url(#pgr${g})"/><rect x="30" y="78" width="40" height="9" rx="2" fill="url(#pc)"/><circle cx="50" cy="48" r="8" fill="#fff" opacity=".8"/><path d="M50 35v-4M50 61v4M37 48h-4M63 48h4" stroke="#fff" stroke-width="2.5" opacity=".8" stroke-linecap="round"/>`,
+polish:g=>`<rect x="42" y="10" width="16" height="30" rx="4" fill="url(#pc)"/><rect x="44" y="38" width="12" height="10" fill="url(#pgr${g})"/><rect x="32" y="46" width="36" height="42" rx="9" fill="url(#pgr${g})"/><rect x="36" y="52" width="4" height="30" rx="2" fill="#fff" opacity=".4"/>`};
+$('pg').innerHTML=C.products.map(p=>`<div class="pt"${p[1]?` style="background:url(${p[1]}) center/cover"`:''}>${p[1]?'':`<svg viewBox="0 0 100 100">${ICON[p[2]](p[3])}</svg>`}<span>${p[0]}</span></div>`).join('');
 $('tg').innerHTML=C.quotes.map(q=>`<blockquote>${q[0]}<cite>— ${q[1]}</cite></blockquote>`).join('');
 $('hb').onclick=()=>$('ml').classList.toggle('on');$('ml').onclick=()=>$('ml').classList.remove('on');
 let S=['Haircut & Style','Hair Spa','Keratin Treatment','Global Hair Colour','Classic Facial','Hydra Facial','De-tan','Party Makeup','Bridal Makeup','Manicure','Pedicure','Full Arms & Legs Waxing','Eyebrow Threading','Relaxing Massage'];
 function opts(){const s=$('ss');s.innerHTML='';[['','Choose a service'],...S.map(x=>[x,x])].forEach(([v,t])=>{const o=document.createElement('option');o.value=v;o.textContent=t;s.appendChild(o)})}
 opts();
-fetch(C.url+'/rest/v1/services?select=name&order=category',{headers:H}).then(r=>r.ok?r.json():[]).then(d=>{if(d.length){S=d.map(x=>x.name);opts()}}).catch(()=>{});
+fetch(C.url+'/rest/v1/public_services?select=name,category&order=category,name',{headers:H}).then(r=>r.ok?r.json():[]).then(d=>{if(d.length){S=[...new Set(d.map(x=>x.name))];opts()}}).catch(()=>{});
 $('th').innerHTML='<option value="">Hour</option>'+[...Array(12)].map((_,i)=>`<option>${i+1}</option>`).join('');
 $('tm').innerHTML='<option value="">Min</option>'+[...Array(12)].map((_,i)=>`<option>${String(i*5).padStart(2,'0')}</option>`).join('');
 const f=$('f');f.d.min=new Date().toISOString().slice(0,10);
@@ -182,7 +224,7 @@ $('go').disabled=true;say('Sending your request…',1);
 const row={id:'AP'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),date:d,time:slot,customer_name:n,customer_mobile:m,service_name:s,stylist:'',status:'Pending',notes:('Booked via website. '+f.t.value.trim()).slice(0,290)};
 try{const r=await fetch(C.url+'/rest/v1/appointments',{method:'POST',headers:{...H,'Content-Type':'application/json',Prefer:'return=minimal'},body:JSON.stringify(row)});
 if(!r.ok)throw 0;try{localStorage.setItem('tb',Date.now())}catch(_){}
-f.reset();say('✦ Thank you, '+n.split(' ')[0]+'! Your request is in. We will confirm shortly.',1)}
+f.reset();say('');$('ok').classList.add('on')}
 catch(_){say('Sorry, we could not send that. Please call '+C.phone+'.')}
 $('go').disabled=false};
 // Staff login: signs in with the same Supabase project as the software; the session is shared on this site, so app.html opens already logged in.
@@ -204,4 +246,20 @@ try{sessionStorage.setItem('taro_web_login','1')}catch(_){}
 location.href='app.html';
 }catch(err){lsay(err.name=='AbortError'?'Server is not responding. Check your internet, or the Supabase project may be paused.':'Could not reach the server. Check your internet and try again.');b.disabled=false}
 finally{clearTimeout(tm)}};
+function resetL(){mo.classList.remove('on');$('lb').disabled=false;$('lm').textContent='';lf.p.value=''}
+addEventListener('pageshow',resetL);
+addEventListener('keydown',e=>{if(e.key=='Escape')resetL()});
+const V=[...document.querySelectorAll('[data-v]')],LD=$('ld');
+function show(n,push){if(!V.some(v=>v.dataset.v==n))n='home';
+LD.style.opacity=1;LD.style.width='70%';
+V.forEach(v=>{v.classList.remove('on','pgv');if(v.dataset.v==n){v.classList.add('on');void v.offsetWidth;v.classList.add('pgv')}});
+document.querySelectorAll('.l a').forEach(a=>a.classList.toggle('on',a.dataset.go==n));
+$('ml').classList.remove('on');window.scrollTo(0,0);
+if(n=='gallery')setTimeout(()=>go(gi),80);
+if(push)history.pushState(null,'','#'+n);
+setTimeout(()=>{LD.style.width='100%'},140);setTimeout(()=>{LD.style.opacity=0;LD.style.width='0'},560)}
+document.addEventListener('click',e=>{const a=e.target.closest('[data-go]');if(a){e.preventDefault();show(a.dataset.go,true)}});
+addEventListener('popstate',()=>show((location.hash||'#home').slice(1)));
+$('okb').onclick=()=>$('ok').classList.remove('on');
+show((location.hash||'#home').slice(1));
 </script></body></html>
