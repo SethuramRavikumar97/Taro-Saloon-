@@ -559,13 +559,45 @@ main{padding-top:68px}
 
 
 /* ---------- Thermal receipt fit: keep every column inside the printable area ---------- */
-@media print{
-  @page{margin:0}
-  html,body{width:100% !important;margin:0 !important}
-  .modal-backdrop,.modal{width:100% !important;max-width:100% !important;margin:0 !important;padding:0 !important}
-  .modal .receipt{width:100% !important;max-width:100% !important;padding:2mm 6mm 6mm !important;font-size:12px !important;overflow:hidden !important;box-sizing:border-box !important}
-  .modal .receipt *{max-width:100% !important;box-sizing:border-box;overflow-wrap:anywhere}
-  .modal .receipt .mono,.modal .receipt div[style*="space-between"] > span:last-child{white-space:nowrap;overflow-wrap:normal;flex-shrink:0;margin-left:8px}
-  .modal .receipt .receipt-total-row.grand{font-size:14px !important}
-  .modal .receipt img{max-width:60px !important;height:auto}
+@media print {
+  @page { margin: 0; }
+  html, body { width: 100% !important; margin: 0 !important; padding: 0 !important; }
+  .modal-backdrop, .modal { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; position: static !important; }
+  .modal .receipt {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 2mm 4mm 6mm !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1.35 !important;
+    color: #000 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .modal .receipt * {
+    max-width: 100% !important;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+    color: #000 !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+  .modal .receipt [style*="font-size"] { font-size: 12px !important; }
+  .modal .receipt .receipt-salon { font-size: 15px !important; font-weight: 700 !important; }
+  .modal .receipt .mono,
+  .modal .receipt div[style*="space-between"] > span:last-child {
+    white-space: nowrap;
+    overflow-wrap: normal;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+  .modal .receipt .receipt-total-row.grand { font-size: 14px !important; font-weight: 700 !important; }
+  .modal .receipt img {
+    max-width: 60px !important;
+    height: auto !important;
+    filter: grayscale(100%) contrast(500%) brightness(65%) !important;
+  }
 }
