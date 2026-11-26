@@ -602,3 +602,13 @@ margin: 0 !important;
   .modal .receipt .receipt-total-row.grand * {
     font-size: 16px !important;
   }
+.modal .receipt .receipt-total-row.grand {
+    font-size: 16px !important;
+    border-top: 2px dashed #000 !important;
+    border-bottom: 2px dashed #000 !important;
+    padding: 4px 0 !important;
+    margin: 4px 0 !important;
+  }
+  .modal .receipt .receipt-total-row.grand * {
+    font-size: 16px !important;
+  }
