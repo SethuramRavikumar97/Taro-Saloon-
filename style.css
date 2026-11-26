@@ -566,8 +566,25 @@ main{padding-top:68px}
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
+    overflow: visible !important;
   }
-  .modal-backdrop, .modal {
+  /* Background page content space edukkama irukka */
+  body > *:not(.modal-backdrop) {
+    display: none !important;
+  }
+  .modal-backdrop {
+    display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+  .modal {
     display: block !important;
     position: static !important;
     transform: none !important;
@@ -576,12 +593,14 @@ main{padding-top:68px}
     height: auto !important;
     margin: 0 !important;
     padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
   }
   .modal .receipt {
     width: 100% !important;
     max-width: 100% !important;
     margin: 0 auto !important;
-    padding: 2mm 4mm 10mm !important;
+    padding: 4mm 4mm 12mm !important; /* Mela 4mm, keela 12mm - balance-a irukkum */
     font-family: Arial, Helvetica, sans-serif !important;
     font-size: 13px !important;
     font-weight: 700 !important;
@@ -590,11 +609,11 @@ main{padding-top:68px}
     overflow: hidden !important;
     box-sizing: border-box !important;
   }
-  /* Cutter Total line-a cut pannaama irukka bottom space */
+  /* Keela Total line cut aagama safe space */
   .modal .receipt::after {
     content: ".";
     display: block;
-    height: 8mm;
+    height: 10mm;
     color: transparent !important;
   }
   .modal .receipt * {
