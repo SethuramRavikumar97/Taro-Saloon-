@@ -561,12 +561,27 @@ main{padding-top:68px}
 /* ---------- Thermal receipt fit: keep every column inside the printable area ---------- */
 @media print {
   @page { margin: 0; }
-  html, body { width: 100% !important; margin: 0 !important; padding: 0 !important; }
-  .modal-backdrop, .modal { width: 100% !important; max-width: 100% !important; margin: 0 !important; padding: 0 !important; position: static !important; }
+  html, body {
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .modal-backdrop, .modal {
+    display: block !important;
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
   .modal .receipt {
     width: 100% !important;
     max-width: 100% !important;
-    padding: 2mm 4mm 6mm !important;
+    margin: 0 auto !important;
+    padding: 2mm 4mm 10mm !important;
     font-family: Arial, Helvetica, sans-serif !important;
     font-size: 13px !important;
     font-weight: 700 !important;
@@ -574,6 +589,13 @@ main{padding-top:68px}
     color: #000 !important;
     overflow: hidden !important;
     box-sizing: border-box !important;
+  }
+  /* Cutter Total line-a cut pannaama irukka bottom space */
+  .modal .receipt::after {
+    content: ".";
+    display: block;
+    height: 8mm;
+    color: transparent !important;
   }
   .modal .receipt * {
     max-width: 100% !important;
@@ -597,8 +619,12 @@ main{padding-top:68px}
   }
   .modal .receipt .receipt-total-row.grand { font-size: 15px !important; }
   .modal .receipt img {
-    max-width: 65px !important;
+    width: 85px !important;
+    max-width: 85px !important;
     height: auto !important;
-    filter: brightness(0) !important; /* Use this if logo is transparent PNG/SVG */
+    display: block !important;
+    margin: 0 auto 2mm !important;
+    image-rendering: crisp-edges !important;
+    filter: grayscale(100%) contrast(2000%) brightness(45%) !important;
   }
 }
