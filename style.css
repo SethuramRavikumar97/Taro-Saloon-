@@ -580,3 +580,19 @@ main{padding-top:68px}
     image-rendering: pixelated !important;
     filter: brightness(0) !important;
   }
+@page {
+    margin: 0 !important;
+  }
+
+  /* Address & GST number mattum sharp-a dark-a print aaga */
+  .modal .receipt p,
+  .modal .receipt div,
+  .modal .receipt span {
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+    opacity: 1 !important;
+    letter-spacing: 0.3px !important;
+    -webkit-font-smoothing: none !important;
+  }
