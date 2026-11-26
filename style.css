@@ -602,13 +602,20 @@ margin: 0 !important;
   .modal .receipt .receipt-total-row.grand * {
     font-size: 16px !important;
   }
-.modal .receipt .receipt-total-row.grand {
+.modal .receipt .receipt-total-row.grand,
+  .modal .receipt .grand,
+  .modal .receipt > div:last-of-type {
     font-size: 16px !important;
+    font-weight: 700 !important;
     border-top: 2px dashed #000 !important;
     border-bottom: 2px dashed #000 !important;
-    padding: 4px 0 !important;
-    margin: 4px 0 !important;
+    padding: 5px 0 !important;
+    margin: 5px 0 !important;
   }
-  .modal .receipt .receipt-total-row.grand * {
+
+  .modal .receipt .receipt-total-row.grand *,
+  .modal .receipt .grand *,
+  .modal .receipt > div:last-of-type * {
     font-size: 16px !important;
+    font-weight: 700 !important;
   }
