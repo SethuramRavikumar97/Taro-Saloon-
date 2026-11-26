@@ -559,7 +559,12 @@ main{padding-top:68px}
 
 
 /* ---------- Thermal receipt fit: keep every column inside the printable area ---------- */
-/* 1. Total line-ku keela safe-a paper feed aaga visible footer */
+@page {
+    margin: 0;
+    size: auto;
+  }
+
+  /* 1. Total line-ku keela safe-a paper feed aaga visible footer */
   .modal .receipt::after {
     content: "*** Thank You! Visit Again ***";
     display: block;
@@ -580,11 +585,8 @@ main{padding-top:68px}
     image-rendering: pixelated !important;
     filter: brightness(0) !important;
   }
-@page {
-    margin: 0 !important;
-  }
 
-  /* Address & GST number mattum sharp-a dark-a print aaga */
+  /* 3. Address & GST number sharp-a dark-a print aaga */
   .modal .receipt p,
   .modal .receipt div,
   .modal .receipt span {
@@ -595,4 +597,17 @@ main{padding-top:68px}
     opacity: 1 !important;
     letter-spacing: 0.3px !important;
     -webkit-font-smoothing: none !important;
+  }
+
+  /* 4. Dotted / dashed lines bold-a dark-a theriya */
+  .modal .receipt hr {
+    border: none !important;
+    border-top: 2px dashed #000 !important;
+    opacity: 1 !important;
+  }
+  .modal .receipt [style*="border"],
+  .modal .receipt .divider,
+  .modal .receipt .receipt-divider {
+    border-color: #000 !important;
+    border-width: 2px !important;
   }
