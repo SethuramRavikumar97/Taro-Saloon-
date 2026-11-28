@@ -56,50 +56,12 @@ let state = {
   productDateTo: '',
 
   // Dynamic Membership Plans
-  memberships: [
-    { id: 'mem_1', name: 'Gold', discountType: 'percent', discountValue: 20 },
-    { id: 'mem_2', name: 'Platinum', discountType: 'percent', discountValue: 30 },
-    { id: 'mem_3', name: 'Silver', discountType: 'percent', discountValue: 10 }
-  ],
+  memberships: [],
 
-  customers: [
-    {id:'C1', name:'Priya Ramesh', mobile:'9840012345', email:'priya.r@example.com', dob:'1994-03-12', gender:'Female', membershipId:'mem_1', points:420, preferredStylist:'Anitha'},
-    {id:'C2', name:'Karthik Subramaniam', mobile:'9884456123', email:'', dob:'', gender:'Male', membershipId:null, points:60, preferredStylist:'Ravi'},
-    {id:'C3', name:'Meena Iyer', mobile:'9962233110', email:'meena.iyer@example.com', dob:'1990-11-02', gender:'Female', membershipId:'mem_2', points:980, preferredStylist:'Anitha'},
-    {id:'C4', name:'Divya Sundar', mobile:'9791122009', email:'', dob:'1998-07-19', gender:'Female', membershipId:'mem_3', points:150, preferredStylist:'Fathima'},
-    {id:'C5', name:'Saran', mobile:'9514957566', email:'', dob:'', gender:'Male', membershipId:null, points:0, preferredStylist:''}
-  ],
-  users: [
-    { id: 'U1', name: 'Anitha', role: 'Stylist', mobile: '9876543210', status: 'Active', dob: '1995-04-18' },
-    { id: 'U2', name: 'Ravi', role: 'Stylist', mobile: '9876543211', status: 'Active', dob: '1992-08-05' },
-    { id: 'U3', name: 'Fathima', role: 'Receptionist', mobile: '9876543212', status: 'Active', dob: '1997-01-22' },
-    { id: 'U4', name: 'Ramesh', role: 'Stylist', mobile: '9876543213', status: 'Active' },
-    { id: 'U5', name: 'Suresh', role: 'Stylist', mobile: '9876543214', status: 'Active' },
-    { id: 'U6', name: 'Alex', role: 'Stylist', mobile: '9876543215', status: 'Active' }
-  ],
-  services: [
-    {id:'S1', code:'HR-CUT', name:'Haircut & Style', category:'Hair', duration:45, price:600, gst:18, commission:10},
-    {id:'S2', code:'HR-SPA', name:'Hair Spa', category:'Hair', duration:60, price:1200, gst:18, commission:10},
-    {id:'S3', code:'HR-CLR', name:'Global Hair Colour', category:'Hair Colour', duration:90, price:2800, gst:18, commission:12},
-    {id:'S4', code:'HR-KRT', name:'Keratin Treatment', category:'Hair', duration:120, price:4500, gst:18, commission:15},
-    {id:'S5', code:'SK-FCL', name:'Classic Facial', category:'Skin', duration:45, price:1500, gst:18, commission:10},
-    {id:'S6', code:'SK-HYD', name:'Hydra Facial', category:'Skin', duration:60, price:2500, gst:18, commission:12},
-    {id:'S7', code:'SK-DTN', name:'De-tan', category:'Skin', duration:30, price:500, gst:18, commission:8},
-    {id:'S8', code:'MK-PRT', name:'Party Makeup', category:'Makeup', duration:60, price:2000, gst:18, commission:15},
-    {id:'S9', code:'MK-BRD', name:'Bridal Makeup', category:'Makeup', duration:150, price:12000, gst:18, commission:15},
-    {id:'S10', code:'NL-MAN', name:'Manicure', category:'Nails', duration:30, price:500, gst:18, commission:8},
-    {id:'S11', code:'NL-PED', name:'Pedicure', category:'Nails', duration:40, price:600, gst:18, commission:8},
-    {id:'S12', code:'WX-FUL', name:'Full Arms & Legs Waxing', category:'Waxing', duration:45, price:900, gst:18, commission:8},
-    {id:'S13', code:'TH-EYE', name:'Eyebrow Threading', category:'Threading', duration:10, price:100, gst:18, commission:5},
-    {id:'S14', code:'SP-MSG', name:'Relaxing Massage (60 min)', category:'Spa', duration:60, price:1800, gst:18, commission:12},
-  ],
-  products: [
-    {id:'P1', name:'Argan Shampoo 250ml', brand:'L\'Oreal Pro', category:'Hair Care', sku:'LP-SH-250', mrp:850, price:850, gst:18, stock:22, minStock:5},
-    {id:'P2', name:'Keratin Serum 100ml', brand:'Wella', category:'Hair Care', sku:'WL-SR-100', mrp:1200, price:1200, gst:18, stock:8, minStock:6},
-    {id:'P3', name:'Hydrating Face Cream', brand:'Lakme', category:'Skin Care', sku:'LK-FC-50', mrp:650, price:650, gst:18, stock:4, minStock:6},
-    {id:'P4', name:'Nail Polish - Ruby Red', brand:'Maybelline', category:'Nails', sku:'MB-NP-RR', mrp:220, price:220, gst:18, stock:30, minStock:10},
-    {id:'P5', name:'Sunscreen SPF 50', brand:'Lotus Herbals', category:'Skin Care', sku:'LT-SS-50', mrp:495, price:495, gst:18, stock:2, minStock:5},
-  ],
+  customers: [],
+  users: [],
+  services: [],
+  products: [],
   bills: [],
   appointments: [],
   navOpen: (typeof window !== 'undefined' ? window.innerWidth > 768 : true),
@@ -136,12 +98,12 @@ let state = {
   birthdayAlertLog: {},
   settings: {
     salonName: 'TARO Signature Salon',
-    gstNumber: '33ABCDE1234F1Z5',
+    gstNumber: '',
     defaultGst: 18,
     defaultMembershipDiscount: 20,
     invoicePrefix: 'INV',
-    phone: '9876543210',
-    address: '123, Main Road, City Center',
+    phone: '',
+    address: '',
     lowStockEmail: '',
     autoEmailAlert: true,
     emailjsPublicKey: '',
@@ -172,10 +134,10 @@ let state = {
   discountReportExpanded: null,
   bankDetails: {
     accountHolder: 'TARO Signature Salon',
-    accountNumber: '987654321012',
-    ifscCode: 'HDFC0001234',
+    accountNumber: '',
+    ifscCode: '',
     bankName: 'HDFC Bank',
-    upiId: 'tarosalon@upi',
+    upiId: '',
   }
 };
 
@@ -278,6 +240,7 @@ const dbMap = {
     notes: r.notes || '', items: r.items || [], totalQty: r.total_qty || 0,
     totalCost: r.total_cost || 0, billFile: r.bill_file_name ? { name: r.bill_file_name } : null
   }),
+    membershipToRow: m => ({ id: m.id, name: m.name, discount_type: m.discountType || 'percent', discount_value: Number(m.discountValue) || 0 }),
   userToRow: u => ({
     id: u.id, name: u.name, role: u.role || null, mobile: u.mobile || null,
     status: u.status || 'Active', dob: u.dob || null, doj: u.doj || null
@@ -641,12 +604,9 @@ function addMembershipPlan(name, type, value) {
     return;
   }
   type = (type === 'flat') ? 'flat' : 'percent';
-  state.memberships.push({
-    id: 'mem_' + Date.now(),
-    name: name.trim(),
-    discountType: type,
-    discountValue: Number(value)
-  });
+    const newPlan = { id: 'mem_' + Date.now(), name: name.trim(), discountType: type, discountValue: Number(value) };
+  state.memberships.push(newPlan);
+  dbWrite(sb && sb.from('memberships').upsert(dbMap.membershipToRow(newPlan)), 'Save membership plan');
   logActivity('Added Membership Plan', `${name.trim()} — ${type === 'flat' ? money(Number(value)) : Number(value)+'%'}`);
   showToast('New Membership Plan Added!');
   render();
@@ -657,6 +617,7 @@ function updateMembershipPlan(planId, type, newValue) {
   if (plan) {
     plan.discountType = (type === 'flat') ? 'flat' : 'percent';
     plan.discountValue = Number(newValue) || 0;
+        dbWrite(sb && sb.from('memberships').upsert(dbMap.membershipToRow(plan)), 'Update membership plan');
     logActivity('Updated Membership Plan', `${plan.name} — ${plan.discountType === 'flat' ? money(plan.discountValue) : plan.discountValue + '%'}`);
     showToast(`${plan.name} discount updated to ${plan.discountType === 'flat' ? money(plan.discountValue) : plan.discountValue + '%'}`);
     render();
@@ -667,6 +628,7 @@ function deleteMembershipPlan(planId) {
   const plan = state.memberships.find(m => m.id === planId);
   if (confirm('Delete this membership plan?')) {
     state.memberships = state.memberships.filter(m => m.id !== planId);
+        dbWrite(sb && sb.from('memberships').delete().eq('id', planId), 'Delete membership plan');
     state.customers.forEach(c => {
       if (c.membershipId === planId) c.membershipId = null;
     });
@@ -1712,6 +1674,7 @@ async function loginWithEmail(email, password){
   await loadSessionProfile(data.session);
   const ok = await dbLoadAll();
   if(!ok) console.warn('[DB] Falling back to local demo data — check Supabase connection.');
+      dbWrite(sb.from('memberships').upsert(state.memberships.map(dbMap.membershipToRow)), 'Sync membership plans');
   logActivity('Login', `${state.auth.user.role} logged in`);
   state.loginBusy = false;
   render();
@@ -3065,7 +3028,7 @@ function renderCustomers(){
   return `
   <div class="page-head">
     <div><h1 class="page-title">Customers</h1></div>
-    <button class="btn btn-gold" onclick="openModal('customer')">+ Add Customer</button>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;"><button class="btn btn-ghost" onclick="openBulk('customers')">⬆ Bulk Import</button><button class="btn btn-gold" onclick="openModal('customer')">+ Add Customer</button></div>
   </div>
   <div class="card">
     <table>
@@ -3132,7 +3095,7 @@ function renderUsers(){
       <h1 class="page-title">Users & Staff</h1>
       <p class="page-sub">Manage stylists, receptionists, and system access.</p>
     </div>
-    <button class="btn btn-gold" onclick="openModal('user')">+ Add User</button>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;"><button class="btn btn-ghost" onclick="openBulk('users')">⬆ Bulk Import</button><button class="btn btn-gold" onclick="openModal('user')">+ Add User</button></div>
   </div>
   <div class="card">
     <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px; background:var(--ivory); padding:10px; border-radius:8px;">
@@ -3202,7 +3165,7 @@ function renderServices(){
   return `
   <div class="page-head">
     <div><h1 class="page-title">Services & Rates</h1></div>
-    <button class="btn btn-gold" onclick="openModal('service')">+ Add Service</button>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;"><button class="btn btn-ghost" onclick="openBulk('services')">⬆ Bulk Import</button><button class="btn btn-gold" onclick="openModal('service')">+ Add Service</button></div>
   </div>
   <div class="card">
     <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px; background:var(--ivory); padding:10px; border-radius:8px;">
@@ -3261,7 +3224,7 @@ function renderProducts(){
   return `
   <div class="page-head">
     <div><h1 class="page-title">Products Inventory</h1></div>
-    <button class="btn btn-gold" onclick="openModal('product')">+ Add Product</button>
+    <div style="display:flex; gap:8px; flex-wrap:wrap;"><button class="btn btn-ghost" onclick="openBulk('products')">⬆ Bulk Import</button><button class="btn btn-gold" onclick="openModal('product')">+ Add Product</button></div>
   </div>
   ${lowStock.length > 0 ? `
   <div class="card" style="margin-bottom:14px; border:1px solid #eecac6; background:#fdf3f1; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
@@ -4012,8 +3975,23 @@ function cancelAssignStaff(){
   syncPaymentWithTotal();
   render();
 }
-
-function saveCustomerModal(id) {
+async function syncCustomerToDb(mode, cust){
+  if(!sb) return;
+  const label = mode === 'insert' ? 'Save customer' : 'Update customer';
+  try{
+    const row = dbMap.customerToRow(cust);
+    if(row.membership_id){
+      const plan = state.memberships.find(m => m.id === row.membership_id);
+      if(plan){
+        const rp = await sb.from('memberships').upsert(dbMap.membershipToRow(plan));
+        if(rp.error){ addDbSyncWarning('Save membership plan', rp.error.message); row.membership_id = null; }
+      } else { row.membership_id = null; }
+    }
+    const rc = mode === 'insert' ? await sb.from('customers').insert(row) : await sb.from('customers').update(row).eq('id', cust.id);
+    if(rc.error) addDbSyncWarning(label, rc.error.message);
+  }catch(err){ addDbSyncWarning(label, String((err && err.message) || err)); }
+}
+async function saveCustomerModal(id) {
   const name = document.getElementById('m-name').value.trim();
   const mobile = document.getElementById('m-mobile').value.trim();
   const dob = document.getElementById('m-dob') ? document.getElementById('m-dob').value : '';
@@ -4028,14 +4006,14 @@ function saveCustomerModal(id) {
     if(cust) {
       cust.name = name; cust.mobile = mobile; cust.dob = dob; cust.gstNumber = gstNumber;
       cust.membershipId = membershipId; cust.membershipAmountPaid = membershipAmountPaid;
-      dbWrite(sb && sb.from('customers').update(dbMap.customerToRow(cust)).eq('id', cust.id), 'Update customer');
+     await syncCustomerToDb('update', cust);
       logActivity('Updated Customer', `${name} (${mobile})`);
     }
     showToast('Customer updated successfully');
   } else {
     const newCust = { id: uid('C'), name, mobile, dob, gstNumber, membershipId, membershipAmountPaid, points:0, preferredStylist:'' };
     state.customers.push(newCust);
-    dbWrite(sb && sb.from('customers').insert(dbMap.customerToRow(newCust)), 'Save customer');
+    await syncCustomerToDb('insert', newCust);
     logActivity('Added Customer', `${name} (${mobile})`);
     state.selectedCustomer = newCust.id;
     state.walkInDetails = { name: newCust.name, mobile: newCust.mobile };
@@ -5323,6 +5301,7 @@ function render(){
     ${state.toast ? `<div class="toast">${state.toast}</div>` : ''}
     ${renderPreviewModal()}
     ${renderBillDetailsModal()}
+    ${renderBulkModal()}
     ${renderModal()}
   `;
 
@@ -5331,6 +5310,227 @@ function render(){
 
 // Initial Load — pull live data from Supabase (falls back to the built-in
 // demo data above if the DB is unreachable, so the app never breaks).
+/* ============ BULK IMPORT (Excel / CSV) — Customers, Staff, Services, Products ============ */
+const BULK = {
+  customers:{label:'Customers',arr:'customers',table:'customers',map:'customerToRow',rule:'same mobile number',
+    cols:['Name*','Mobile*','Email','DOB','Gender','GST Number','Membership Plan','Membership Amount Paid','Points','Preferred Stylist'],
+    sample:['Anita Rao','9876543210','anita@example.com','1995-04-12','Female','','','','0','']},
+  users:{label:'Users / Staff',arr:'users',table:'users',map:'userToRow',rule:'same mobile number (or same name when no mobile)',
+    cols:['Name*','Role','Mobile','Status','DOB','DOJ'],
+    sample:['Divya','Stylist','9876500000','Active','1996-02-10','2024-01-15']},
+  services:{label:'Services',arr:'services',table:'services',map:'serviceToRow',rule:'same service name',
+    cols:['Name*','Category','Duration (min)','Price*','Membership Price','GST %','Commission %','Code','HSN Code','SAC Code'],
+    sample:['Haircut & Style','Hair','45','600','500','18','10','HR-CUT','','999721']},
+  products:{label:'Products',arr:'products',table:'products',map:'productToRow',rule:'same SKU, or same name + brand',
+    cols:['Name*','Brand','Category','SKU','Price*','MRP','GST %','Stock','Min Stock','HSN Code'],
+    sample:['Argan Shampoo 250ml','Loreal','Hair Care','LP-SH-250','850','850','18','20','5','3305']}
+};
+const bkNorm = h => String(h ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const bkKey = s => String(s ?? '').toLowerCase().replace(/\s+/g, ' ').trim();
+const bkStr = v => String(v ?? '').replace(/[<>]/g, '').trim();
+const bkGet = (r, al) => { for(const a of al){ const v = r[a]; if(v !== undefined && String(v).trim() !== '') return v; } return ''; };
+function bkNum(v, d){ if(v === '' || v == null) return d; const n = Number(String(v).replace(/[₹%,\s]/g, '')); return isNaN(n) ? NaN : n; }
+function bkMobile(v){ let d = String(v ?? '').replace(/\D/g, ''); if(d.length > 10 && d.startsWith('91')) d = d.slice(-10); return d; }
+function bkGender(v){ const s = bkStr(v).toLowerCase(); return (s === 'm' || s === 'male') ? 'Male' : (s === 'f' || s === 'female') ? 'Female' : s ? 'Other' : ''; }
+function bkDate(v){
+  if(v === '' || v == null) return '';
+  let y, m, d;
+  if(v instanceof Date){ const t = new Date(v.getTime() + 12*36e5); y = t.getFullYear(); m = t.getMonth()+1; d = t.getDate(); }
+  else {
+    const s = String(v).trim(); let x;
+    if(x = s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})$/)){ y = +x[1]; m = +x[2]; d = +x[3]; }
+    else if(x = s.match(/^(\d{1,2})[-\/\.](\d{1,2})[-\/\.](\d{4})$/)){ d = +x[1]; m = +x[2]; y = +x[3]; }
+    else return null;
+  }
+  const t = new Date(Date.UTC(y, m-1, d));
+  if(t.getUTCMonth() !== m-1 || t.getUTCDate() !== d) return null;
+  return `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+}
+const BULK_PARSE = {
+  customers(r){
+    const e = [], name = bkStr(bkGet(r, ['name','customername'])), mobile = bkMobile(bkGet(r, ['mobile','mobilenumber','phone','phonenumber','contact']));
+    if(!name) e.push('Name missing');
+    if(mobile.length !== 10) e.push('Mobile must be 10 digits');
+    const dob = bkDate(bkGet(r, ['dob','dateofbirth','birthday'])); if(dob === null) e.push('DOB format invalid (use YYYY-MM-DD)');
+    const planName = bkStr(bkGet(r, ['membershipplan','membership','plan','tier'])); let membershipId = null;
+    if(planName){ const p = state.memberships.find(m => bkKey(m.name) === bkKey(planName)); if(p) membershipId = p.id; else e.push('Membership plan "' + planName + '" not found'); }
+    const paid = bkNum(bkGet(r, ['membershipamountpaid','membershipamount']), null), points = bkNum(bkGet(r, ['points']), 0);
+    if(Number.isNaN(paid) || Number.isNaN(points)) e.push('Points / amount must be numbers');
+    return { obj:{ id:'', name, mobile, email:bkStr(bkGet(r, ['email','emailid'])), dob:dob || '', gender:bkGender(bkGet(r, ['gender','sex'])),
+      gstNumber:bkStr(bkGet(r, ['gstnumber','gstin','gst'])).toUpperCase(), membershipId, membershipAmountPaid:paid, points:points || 0,
+      preferredStylist:bkStr(bkGet(r, ['preferredstylist','stylist'])) }, keys:['m:' + mobile], errs:e };
+  },
+  users(r){
+    const e = [], name = bkStr(bkGet(r, ['name','staffname','username'])), mobile = bkMobile(bkGet(r, ['mobile','mobilenumber','phone']));
+    if(!name) e.push('Name missing');
+    if(mobile && mobile.length !== 10) e.push('Mobile must be 10 digits');
+    const dob = bkDate(bkGet(r, ['dob','dateofbirth'])), doj = bkDate(bkGet(r, ['doj','dateofjoining','joiningdate']));
+    if(dob === null || doj === null) e.push('Date format invalid (use YYYY-MM-DD)');
+    return { obj:{ id:'', name, role:bkStr(bkGet(r, ['role','designation'])), mobile, status:bkStr(bkGet(r, ['status'])) || 'Active', dob:dob || '', doj:doj || '' },
+      keys:[mobile ? 'm:' + mobile : 'n:' + bkKey(name)], errs:e };
+  },
+  services(r){
+    const e = [], name = bkStr(bkGet(r, ['name','servicename','service']));
+    const price = bkNum(bkGet(r, ['price','rate']), NaN), duration = bkNum(bkGet(r, ['durationmin','duration','minutes']), 30),
+      mp = bkNum(bkGet(r, ['membershipprice','memberprice']), null), gst = bkNum(bkGet(r, ['gst','gstrate','gstpercent']), state.settings.defaultGst),
+      comm = bkNum(bkGet(r, ['commissionpercent','commission']), 10);
+    if(!name) e.push('Name missing');
+    if(Number.isNaN(price) || price < 0) e.push('Price missing / invalid');
+    if([duration, mp, gst, comm].some(Number.isNaN)) e.push('Duration / GST / Commission / Membership price must be numbers');
+    return { obj:{ id:'', code:bkStr(bkGet(r, ['code','servicecode'])), name, category:bkStr(bkGet(r, ['category'])) || 'General', duration, price, membershipPrice:mp,
+      gst, commission:comm, hsnCode:bkStr(bkGet(r, ['hsncode','hsn'])), sacCode:bkStr(bkGet(r, ['saccode','sac'])) }, keys:['n:' + bkKey(name)], errs:e };
+  },
+  products(r){
+    const e = [], name = bkStr(bkGet(r, ['name','productname','product'])), brand = bkStr(bkGet(r, ['brand'])), sku = bkStr(bkGet(r, ['sku','skucode']));
+    const price = bkNum(bkGet(r, ['price','sellingprice']), NaN), mrp = bkNum(bkGet(r, ['mrp']), null), gst = bkNum(bkGet(r, ['gst','gstrate','gstpercent']), state.settings.defaultGst),
+      stock = bkNum(bkGet(r, ['stock','quantity','qty','openingstock']), 0), min = bkNum(bkGet(r, ['minstock','minimumstock','reorderlevel']), 5);
+    if(!name) e.push('Name missing');
+    if(Number.isNaN(price) || price < 0) e.push('Price missing / invalid');
+    if([mrp, gst, stock, min].some(Number.isNaN)) e.push('MRP / GST / Stock / Min stock must be numbers');
+    const keys = ['nb:' + bkKey(name) + '|' + bkKey(brand)]; if(sku) keys.push('s:' + bkKey(sku));
+    return { obj:{ id:'', name, brand, category:bkStr(bkGet(r, ['category'])) || 'General', sku, mrp:(mrp ?? price), price, gst,
+      stock:Math.round(stock), minStock:Math.round(min), hsnCode:bkStr(bkGet(r, ['hsncode','hsn'])) }, keys, errs:e };
+  }
+};
+function bkExistingKeys(entity){
+  const set = new Map(), add = k => set.set(k, 'already in the app');
+  if(entity === 'customers') state.customers.forEach(c => c.mobile && add('m:' + bkMobile(c.mobile)));
+  if(entity === 'users') state.users.forEach(u => add(u.mobile ? 'm:' + bkMobile(u.mobile) : 'n:' + bkKey(u.name)));
+  if(entity === 'services') state.services.forEach(s => add('n:' + bkKey(s.name)));
+  if(entity === 'products') state.products.forEach(p => { add('nb:' + bkKey(p.name) + '|' + bkKey(p.brand || '')); if(p.sku) add('s:' + bkKey(p.sku)); });
+  return set;
+}
+function bkBuild(entity, matrix){
+  const hdr = (matrix[0] || []).map(bkNorm), seen = bkExistingKeys(entity), out = [];
+  matrix.slice(1).forEach((row, i) => {
+    if(!row.some(c => String(c ?? '').trim() !== '')) return;
+    const r = {}; hdr.forEach((h, j) => { if(h && r[h] === undefined) r[h] = row[j]; });
+    const p = BULK_PARSE[entity](r); let status = 'new', reason = '';
+    if(p.errs.length){ status = 'error'; reason = p.errs.join('; '); }
+    else {
+      const hit = p.keys.find(k => seen.has(k));
+      if(hit){ status = 'dup'; reason = 'Duplicate — ' + seen.get(hit); }
+      else p.keys.forEach(k => seen.set(k, 'repeated in this file (row ' + (i + 2) + ')'));
+    }
+    out.push({ n:i + 2, status, reason, obj:p.obj });
+  });
+  return out;
+}
+function bkParseCSV(text){
+  const rows = []; let row = [], f = '', q = false; text = text.replace(/^\uFEFF/, '');
+  for(let i = 0; i < text.length; i++){
+    const c = text[i];
+    if(q){ if(c === '"'){ if(text[i+1] === '"'){ f += '"'; i++; } else q = false; } else f += c; }
+    else if(c === '"') q = true;
+    else if(c === ','){ row.push(f); f = ''; }
+    else if(c === '\n' || c === '\r'){ if(c === '\r' && text[i+1] === '\n') i++; row.push(f); f = ''; rows.push(row); row = []; }
+    else f += c;
+  }
+  if(f !== '' || row.length){ row.push(f); rows.push(row); }
+  return rows;
+}
+function loadXLSX(){
+  if(window.XLSX) return Promise.resolve();
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+    s.onload = res; s.onerror = () => rej(new Error('Could not load the Excel reader — check internet, or save the sheet as .csv and upload that.'));
+    document.head.appendChild(s);
+  });
+}
+function openBulk(entity){ state.bulk = { entity, fileName:'', results:null, loading:false, err:'' }; render(); }
+function closeBulk(){ state.bulk = null; render(); }
+async function bulkTemplate(entity){
+  const c = BULK[entity];
+  try{
+    await loadXLSX();
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([c.cols, c.sample]), 'Data');
+    XLSX.writeFile(wb, 'TARO_' + entity + '_template.xlsx');
+  }catch(e){
+    downloadCSV('TARO_' + entity + '_template.csv', c.cols.join(',') + '\n' + c.sample.map(v => /[",]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v).join(',') + '\n');
+  }
+}
+async function bulkFile(inp){
+  const file = inp.files[0]; if(!file || !state.bulk) return;
+  state.bulk.loading = true; state.bulk.err = ''; state.bulk.fileName = file.name; render();
+  try{
+    let matrix;
+    if(/\.csv$/i.test(file.name)) matrix = bkParseCSV(await file.text());
+    else {
+      await loadXLSX();
+      const wb = XLSX.read(await file.arrayBuffer(), { type:'array', cellDates:true });
+      matrix = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header:1, defval:'', raw:true, blankrows:false });
+    }
+    if(matrix.length < 2) throw new Error('No data rows found under the header row.');
+    state.bulk.results = bkBuild(state.bulk.entity, matrix);
+  }catch(e){ state.bulk.err = e.message || 'Could not read the file'; state.bulk.results = null; }
+  state.bulk.loading = false; render();
+}
+function bulkApply(){
+  const b = state.bulk; if(!b || !b.results) return;
+  const c = BULK[b.entity], fresh = b.results.filter(r => r.status === 'new').map(r => r.obj);
+  if(!fresh.length) return;
+  const skipped = b.results.length - fresh.length, pre = { customers:'C', users:'U', services:'S', products:'P' }[b.entity];
+  const used = new Set(state[c.arr].map(x => x.id)); let n = state.services.length;
+  fresh.forEach(o => { do { o.id = uid(pre); } while(used.has(o.id)); used.add(o.id); if(b.entity === 'services' && !o.code) o.code = 'SRV-' + (++n); });
+  state[c.arr].push(...fresh);
+  for(let i = 0; i < fresh.length; i += 200){
+    dbWrite(sb && sb.from(c.table).insert(fresh.slice(i, i + 200).map(dbMap[c.map])), 'Bulk import ' + c.label);
+  }
+  logActivity('Bulk Import', `${fresh.length} ${c.label} imported` + (skipped ? `, ${skipped} skipped` : ''));
+  showToast(`${fresh.length} ${c.label} imported` + (skipped ? ` (${skipped} skipped)` : ''));
+  state.bulk = null; render();
+}
+function renderBulkModal(){
+  const b = state.bulk; if(!b) return '';
+  const c = BULK[b.entity], R = b.results, E = s => String(s ?? '').replace(/[&<>"]/g, ch => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[ch]));
+  const cnt = s => R ? R.filter(r => r.status === s).length : 0;
+  const SHOW = {
+    customers:[['Name', o => o.name], ['Mobile', o => o.mobile], ['Plan', o => (state.memberships.find(m => m.id === o.membershipId) || {}).name || '—']],
+    users:[['Name', o => o.name], ['Role', o => o.role || '—'], ['Mobile', o => o.mobile || '—']],
+    services:[['Name', o => o.name], ['Category', o => o.category], ['Price', o => money(o.price)], ['GST', o => o.gst + '%']],
+    products:[['Name', o => o.name], ['Brand', o => o.brand || '—'], ['SKU', o => o.sku || '—'], ['Price', o => money(o.price)], ['Stock', o => o.stock]]
+  }[b.entity];
+  const badge = r => r.status === 'new' ? '<span class="tag tag-sage">New</span>' : r.status === 'dup' ? `<span class="tag tag-gold">Skipped</span> <span style="font-size:11px">${E(r.reason)}</span>` : `<span class="tag tag-alert">Error</span> <span style="font-size:11px">${E(r.reason)}</span>`;
+  return `
+  <div class="modal-backdrop no-print">
+    <div class="modal" style="max-width:800px;">
+      <div class="modal-head"><h3>Bulk Import — ${c.label}</h3><button class="close-x" onclick="closeBulk()">×</button></div>
+      <ol style="font-size:13px; margin:0 0 12px; padding-left:18px; color:var(--text-dim);">
+        <li>Download the Excel template and fill one row per item (columns marked * are required).</li>
+        <li>Upload the file — you get a preview first, nothing is saved yet.</li>
+        <li>Duplicates are skipped automatically (${c.rule}).</li>
+      </ol>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+        <button class="btn btn-ghost btn-sm" onclick="bulkTemplate('${b.entity}')">⬇ Download Excel template</button>
+        <input type="file" accept=".xlsx,.xls,.csv" onchange="bulkFile(this)" style="max-width:320px;">
+      </div>
+      ${b.loading ? '<p>Reading file…</p>' : ''}
+      ${b.err ? `<p style="color:var(--alert);">${E(b.err)}</p>` : ''}
+      ${R ? `
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+          <span class="tag tag-sage">${cnt('new')} new</span>
+          <span class="tag tag-gold">${cnt('dup')} duplicates skipped</span>
+          <span class="tag tag-alert">${cnt('error')} errors (not imported)</span>
+          <span style="font-size:12px; color:var(--text-dim);">${E(b.fileName)}</span>
+        </div>
+        <div style="max-height:300px; overflow:auto; border:1px solid var(--line); border-radius:8px;">
+          <table>
+            <thead><tr><th>Row</th>${SHOW.map(s => `<th>${s[0]}</th>`).join('')}<th>Result</th></tr></thead>
+            <tbody>${R.slice(0, 200).map(r => `<tr><td>${r.n}</td>${SHOW.map(s => `<td>${E(s[1](r.obj))}</td>`).join('')}<td>${badge(r)}</td></tr>`).join('')}</tbody>
+          </table>
+        </div>
+        ${R.length > 200 ? `<div style="font-size:11.5px; color:var(--text-dim); margin-top:6px;">Showing the first 200 of ${R.length} rows — all ${cnt('new')} new rows will be imported.</div>` : ''}
+      ` : ''}
+      <div style="display:flex; gap:10px; margin-top:14px;">
+        <button class="btn btn-ghost" style="flex:1;" onclick="closeBulk()">Cancel</button>
+        <button class="btn btn-gold" style="flex:1;" ${cnt('new') ? '' : 'disabled'} onclick="bulkApply()">Import ${cnt('new')} ${c.label}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
 async function bootstrapApp(){
   const appEl = document.getElementById('app');
   if(appEl && sb){
@@ -5340,6 +5540,7 @@ async function bootstrapApp(){
   if(sb && state.auth.isAuthenticated){
     const ok = await dbLoadAll();
     if(!ok) console.warn('[DB] Falling back to local demo data — check Supabase connection.');
+        dbWrite(sb.from('memberships').upsert(state.memberships.map(dbMap.membershipToRow)), 'Sync membership plans');
   }
   if(state.auth.isAuthenticated){
     checkDailyStockReport();
